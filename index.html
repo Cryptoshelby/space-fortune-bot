@@ -29,16 +29,15 @@
         .play-circle:active{transform:scale(.95);box-shadow:0 0 50px rgba(0,229,255,.8)}
         .play-text{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;color:#000}
         
-        .panel-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:100;background:rgba(0,0,0,.8);justify-content:center;align-items:center}
+        .panel-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:100;background:rgba(0,0,0,.85);justify-content:center;align-items:center}
         .panel-overlay.active{display:flex}
-        .section-panel{width:88%;max-width:380px;max-height:80vh;overflow-y:auto;background:rgba(5,5,20,.95);border:1px solid rgba(0,229,255,.12);border-radius:20px;padding:24px;text-align:center}
+        .section-panel{width:88%;max-width:380px;max-height:80vh;overflow-y:auto;background:rgba(5,5,20,.95);border:1px solid rgba(0,229,255,.12);border-radius:20px;padding:24px;text-align:center;position:relative}
         .section-panel h3{font-family:'Orbitron',monospace;font-size:18px;color:var(--neon);text-shadow:0 0 15px rgba(0,229,255,.3);margin-bottom:16px;letter-spacing:2px}
         .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
         .btn{padding:10px 20px;border:none;border-radius:25px;font-weight:700;cursor:pointer;font-family:'Squada One',sans-serif;font-size:15px;letter-spacing:1px;transition:.3s}
         .btn-gold{background:linear-gradient(135deg,var(--gold),#ffaa00);color:#000}
         .btn-neon{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000}
         .btn-green{background:linear-gradient(135deg,var(--green),#00aa55);color:#000}
-        .btn-tg{background:var(--tgblue);color:#fff;width:100%;padding:14px;border-radius:14px;font-weight:700;font-size:16px;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(36,129,204,.4)}
         input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;font-size:14px;font-family:'Squada One',sans-serif}
         .level-bar{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin:4px 0;overflow:hidden}
         .level-fill{height:100%;background:var(--neon);border-radius:3px;transition:.3s}
@@ -62,27 +61,25 @@
     <button class="btn btn-gold" onclick="restartGame()" style="margin-top:12px;">JUGAR OTRA VEZ</button>
 </div>
 
-<!-- OVERLAYS PARA PANELES -->
-<div class="panel-overlay" id="overlay-perfil"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('perfil')">✕</span><h3>👤 PERFIL</h3><p id="userName" style="font-size:18px;margin-bottom:10px;"></p><p>⭐ Saldo: <span id="perfilBalance">100</span></p><p>🏅 Nivel: <span id="nivelJugador">1</span></p><p>💎 Total: <span id="totalStars">0</span>⭐</p><p>👥 Referidos: <span id="referidos">0</span></p><button class="btn btn-neon" onclick="unirseCanal()" style="width:100%;margin-top:12px;">📢 UNIRSE A @PaperplaneFeed (+100 pts)</button><button class="btn btn-gold" onclick="showPanel('referidos')" style="width:100%;margin-top:8px;">🔗 SISTEMA DE REFERIDOS</button></div></div>
+<!-- OVERLAYS -->
+<div class="panel-overlay" id="overlay-perfil"><div class="section-panel"><span class="close-btn" onclick="closePanel('perfil')">✕</span><h3>👤 PERFIL</h3><p id="userName" style="font-size:18px;margin-bottom:10px;"></p><p>⭐ Saldo: <span id="perfilBalance">100</span></p><p>🏅 Nivel: <span id="nivelJugador">1</span></p><p>💎 Total: <span id="totalStars">0</span>⭐</p><p>👥 Referidos: <span id="referidos">0</span></p><button class="btn btn-neon" onclick="unirseCanal()" style="width:100%;margin-top:12px;">📢 UNIRSE A @PaperplaneFeed (+100 pts)</button><button class="btn btn-gold" onclick="showPanel('referidos')" style="width:100%;margin-top:8px;">🔗 SISTEMA DE REFERIDOS</button></div></div>
 
-<div class="panel-overlay" id="overlay-referidos"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('referidos')">✕</span><h3>🔗 REFERIDOS</h3><p>Invita amigos y gana estrellas</p><div class="card"><span>🔗 Tu enlace:</span><span style="font-size:10px;word-break:break-all">https://t.me/SpaceFortuneBot?start=ref</span></div><p>👥 Has invitado: <span id="referidosCount">0</span></p><p>💰 Ganas 5⭐ por cada amigo que juegue</p><button class="btn btn-gold" onclick="copiarEnlace()" style="width:100%;margin-top:8px;">📋 COPIAR ENLACE</button><button class="btn btn-neon" onclick="compartirEnlace()" style="width:100%;margin-top:8px;">📤 COMPARTIR</button></div></div>
+<div class="panel-overlay" id="overlay-referidos"><div class="section-panel"><span class="close-btn" onclick="closePanel('referidos')">✕</span><h3>🔗 REFERIDOS</h3><p>Invita amigos y gana estrellas</p><div class="card"><span>🔗 Tu enlace:</span><span style="font-size:10px;word-break:break-all">https://t.me/SpaceFortuneBot?start=ref</span></div><p>👥 Has invitado: <span id="referidosCount">0</span></p><p>💰 Ganas 5⭐ por cada amigo que juegue</p><button class="btn btn-gold" onclick="copiarEnlace()" style="width:100%;margin-top:8px;">📋 COPIAR ENLACE</button><button class="btn btn-neon" onclick="compartirEnlace()" style="width:100%;margin-top:8px;">📤 COMPARTIR</button></div></div>
 
-<div class="panel-overlay" id="overlay-ruleta"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('ruleta')">✕</span><h3>🎰 RULETA</h3><div class="card" style="flex-direction:column;gap:8px;"><strong>50⭐</strong><button class="btn btn-gold" onclick="girarRuleta(50)">GIRAR</button></div><div class="card" style="flex-direction:column;gap:8px;"><strong>100⭐</strong><button class="btn btn-gold" onclick="girarRuleta(100)">GIRAR</button></div><div class="card" style="flex-direction:column;gap:8px;"><strong>150⭐</strong><button class="btn btn-gold" onclick="girarRuleta(150)">GIRAR</button></div><p id="ruletaResult" style="color:var(--gold);margin-top:10px;font-family:'Orbitron',monospace;"></p></div></div>
+<div class="panel-overlay" id="overlay-mejoras"><div class="section-panel"><span class="close-btn" onclick="closePanel('mejoras')">✕</span><h3>🛡️ MEJORAS</h3><div class="card"><span>🛡️ Escudo Nv.<span id="escudoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="escudoBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnEscudo" onclick="comprar('escudo')">25⭐</button></div><div class="card"><span>⚡ Nitro Nv.<span id="nitroNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="nitroBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnNitro" onclick="comprar('nitro')">15⭐</button></div><div class="card"><span>💥 Disparo Nv.<span id="disparoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="disparoBar" style="width:20%"></div></div></div><button class="btn btn-gold" id="btnDisparo" onclick="comprar('disparo')">10⭐</button></div></div></div>
 
-<div class="panel-overlay" id="overlay-mejoras"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('mejoras')">✕</span><h3>🛡️ MEJORAS</h3><div class="card"><span>🛡️ Escudo Nv.<span id="escudoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="escudoBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnEscudo" onclick="comprar('escudo')">25⭐</button></div><div class="card"><span>⚡ Nitro Nv.<span id="nitroNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="nitroBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnNitro" onclick="comprar('nitro')">15⭐</button></div><div class="card"><span>💥 Disparo Nv.<span id="disparoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="disparoBar" style="width:20%"></div></div></div><button class="btn btn-gold" id="btnDisparo" onclick="comprar('disparo')">10⭐</button></div></div></div>
+<div class="panel-overlay" id="overlay-billetera"><div class="section-panel"><span class="close-btn" onclick="closePanel('billetera')">✕</span><h3>💰 BILLETERA</h3><p>⭐ Saldo: <span id="walletBalance">100</span></p><button class="btn btn-gold" onclick="showPanel('deposito')" style="width:100%;margin:8px 0;">💳 DEPOSITAR</button><button class="btn btn-green" onclick="showPanel('retiro')" style="width:100%;margin:8px 0;">📤 RETIRAR (mín 50⭐)</button></div></div>
 
-<div class="panel-overlay" id="overlay-billetera"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('billetera')">✕</span><h3>💰 BILLETERA</h3><p>⭐ Saldo: <span id="walletBalance">100</span></p><button class="btn btn-gold" onclick="showPanel('deposito')" style="width:100%;margin:8px 0;">💳 DEPOSITAR</button><button class="btn btn-green" onclick="showPanel('retiro')" style="width:100%;margin:8px 0;">📤 RETIRAR (mín 50⭐)</button><p style="font-size:11px;color:#aaa;">10,000 pts = 10⭐ al hacer Game Over</p></div></div>
+<div class="panel-overlay" id="overlay-deposito"><div class="section-panel"><span class="close-btn" onclick="closePanel('deposito')">✕</span><h3>💳 DEPOSITAR</h3><input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)"><button class="btn btn-gold" onclick="depositar()" style="width:100%;">💳 DEPOSITAR</button></div></div>
 
-<div class="panel-overlay" id="overlay-deposito"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('deposito')">✕</span><h3>💳 DEPOSITAR</h3><input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)"><button class="btn btn-gold" onclick="depositar()" style="width:100%;">💳 DEPOSITAR</button></div></div>
-
-<div class="panel-overlay" id="overlay-retiro"><div class="section-panel" style="position:relative"><span class="close-btn" onclick="closePanel('retiro')">✕</span><h3>📤 RETIRAR</h3><input type="number" id="withdrawAmount" placeholder="Mínimo 50⭐"><button class="btn btn-green" onclick="retirar()" style="width:100%;">📤 RETIRAR COMO REGALO</button></div></div>
+<div class="panel-overlay" id="overlay-retiro"><div class="section-panel"><span class="close-btn" onclick="closePanel('retiro')">✕</span><h3>📤 RETIRAR</h3><input type="number" id="withdrawAmount" placeholder="Mínimo 50⭐"><button class="btn btn-green" onclick="retirar()" style="width:100%;">📤 RETIRAR COMO REGALO</button></div></div>
 
 <nav class="footer-menu">
     <button onclick="showPanel('perfil')"><span class="icon">👤</span>Perfil</button>
-    <button onclick="showPanel('ruleta')"><span class="icon">🎰</span>Ruleta</button>
-    <div class="play-circle" onclick="closeAllPanels()"><span class="play-text">PLAY</span></div>
     <button onclick="showPanel('mejoras')"><span class="icon">🛡️</span>Mejoras</button>
+    <div class="play-circle" onclick="closeAllPanels()"><span class="play-text">PLAY</span></div>
     <button onclick="showPanel('billetera')"><span class="icon">💰</span>Billetera</button>
+    <button onclick="showPanel('referidos')"><span class="icon">🔗</span>Referidos</button>
 </nav>
 
 <script>
@@ -98,12 +95,7 @@
     const balasPorNivel=[1,2,3,4,6];
     let dificultadBase=1.5;
     
-    function calcDificultad(){
-        let totalMejoras=escudoNv+nitroNv+disparoNv;
-        if(totalMejoras<=3)return 2.0;
-        if(totalMejoras<=6)return 1.3;
-        return 1.0;
-    }
+    function calcDificultad(){let t=escudoNv+nitroNv+disparoNv;if(t<=3)return 2.0;if(t<=6)return 1.3;return 1.0;}
     
     function updateBalance(){
         document.getElementById('balance').textContent=balance;
@@ -115,9 +107,7 @@
     }
     
     function updateUI(){
-        document.getElementById('escudoNv').textContent=escudoNv;
-        document.getElementById('nitroNv').textContent=nitroNv;
-        document.getElementById('disparoNv').textContent=disparoNv;
+        document.getElementById('escudoNv').textContent=escudoNv;document.getElementById('nitroNv').textContent=nitroNv;document.getElementById('disparoNv').textContent=disparoNv;
         document.getElementById('nivelDisp').textContent='Disp '+disparoNv;
         document.getElementById('nivelJugador').textContent=Math.floor(totalStars/100)+1;
         document.getElementById('escudoBar').style.width=(escudoNv/maxNiveles.escudo*100)+'%';
@@ -126,28 +116,23 @@
         document.getElementById('btnEscudo').textContent=escudoNv<maxNiveles.escudo?precios.escudo[escudoNv-1]+'⭐':'MAX';
         document.getElementById('btnNitro').textContent=nitroNv<maxNiveles.nitro?precios.nitro[nitroNv-1]+'⭐':'MAX';
         document.getElementById('btnDisparo').textContent=disparoNv<maxNiveles.disparo?precios.disparo[disparoNv-1]+'⭐':'MAX';
-        disparoInterval=800-(disparoNv-1)*120;
-        gameSpeed=2+nitroNv*0.4;
-        dificultadBase=calcDificultad();
+        disparoInterval=800-(disparoNv-1)*120;gameSpeed=2+nitroNv*0.4;dificultadBase=calcDificultad();
     }
     updateUI();
     
     function showPanel(name){
         closeAllPanels();
         document.getElementById('overlay-'+name).classList.add('active');
-        if(name!=='game'&&gameRunning){
+        // Conversión silenciosa de puntos al salir
+        if(gameRunning){
             gameRunning=false;
             let earned=Math.floor(score/10000)*10;
             if(earned>0){balance+=earned;totalStars+=earned;}
-            score=0;document.getElementById('score').textContent='0';
-            updateBalance();
+            score=0;document.getElementById('score').textContent='0';updateBalance();
         }
     }
     
-    function closePanel(name){
-        document.getElementById('overlay-'+name).classList.remove('active');
-    }
-    
+    function closePanel(name){document.getElementById('overlay-'+name).classList.remove('active');}
     function closeAllPanels(){
         document.querySelectorAll('.panel-overlay').forEach(p=>p.classList.remove('active'));
         gameRunning=true;document.getElementById('gameOver').style.display='none';
@@ -155,45 +140,20 @@
     
     function restartGame(){score=0;gameRunning=true;escudoActivo=false;document.getElementById('gameOver').style.display='none';document.getElementById('score').textContent='0';}
     
-    function unirseCanal(){
-        window.open('https://t.me/PaperplaneFeed','_blank');
-        setTimeout(()=>{
-            canalVerificado=true;
-            score+=100;document.getElementById('score').textContent=score;
-            updateBalance();
-        },2000);
-    }
-    
-    function copiarEnlace(){
-        navigator.clipboard?.writeText('https://t.me/SpaceFortuneBot?start=ref');
-        alert('📋 Enlace copiado');
-    }
-    
-    function compartirEnlace(){
-        tg.openTelegramLink('https://t.me/share/url?url=https://t.me/SpaceFortuneBot?start=ref&text=🚀%20Juega%20Space%20Fortune%20y%20gana%20estrellas');
-    }
+    function unirseCanal(){window.open('https://t.me/PaperplaneFeed','_blank');setTimeout(()=>{canalVerificado=true;score+=100;document.getElementById('score').textContent=score;},2000);}
+    function copiarEnlace(){navigator.clipboard?.writeText('https://t.me/SpaceFortuneBot?start=ref');}
+    function compartirEnlace(){tg.openTelegramLink('https://t.me/share/url?url=https://t.me/SpaceFortuneBot?start=ref&text=🚀%20Juega%20Space%20Fortune');}
     
     function comprar(tipo){
         let nv,precio,max;
         if(tipo==='escudo'){nv=escudoNv;precio=precios.escudo[nv-1];max=maxNiveles.escudo;}
         else if(tipo==='nitro'){nv=nitroNv;precio=precios.nitro[nv-1];max=maxNiveles.nitro;}
         else{nv=disparoNv;precio=precios.disparo[nv-1];max=maxNiveles.disparo;}
-        if(nv>=max){alert('✅ Nivel máximo alcanzado');return;}
+        if(nv>=max)return;
         if(balance<precio){alert('❌ Necesitas '+precio+'⭐');return;}
         balance-=precio;updateBalance();
-        if(tipo==='escudo')escudoNv++;
-        else if(tipo==='nitro')nitroNv++;
-        else disparoNv++;
+        if(tipo==='escudo')escudoNv++;else if(tipo==='nitro')nitroNv++;else disparoNv++;
         updateUI();
-    }
-    
-    function girarRuleta(precio){
-        if(balance<precio){alert('❌ Necesitas '+precio+'⭐');return;}
-        balance-=precio;updateBalance();
-        const p={50:['🎁 15⭐','🎁 25⭐','🛡️ Escudo','❌ Nada'],100:['🎁 50⭐','🎁 75⭐','⚡ Nitro','💎 100⭐'],150:['🎁 100⭐','🚀 Nave Prem','💎 200⭐','🎁 Gift Col.']};
-        const r=p[precio][Math.floor(Math.random()*4)];
-        document.getElementById('ruletaResult').textContent='🎯 '+r;
-        const g=parseInt(r.match(/\d+/)?.[0]||0);if(g){balance+=g;totalStars+=g;updateBalance();}
     }
     
     function depositar(){const a=parseInt(document.getElementById('depositAmount').value);if(a>=10){balance+=a;totalStars+=a;updateBalance();}}
@@ -207,8 +167,6 @@
     
     document.addEventListener('touchmove',e=>{e.preventDefault();targetX=e.touches[0].clientX;});
     document.addEventListener('mousemove',e=>{targetX=e.clientX;});
-    
-    // Simular referidos al iniciar (demo)
     setTimeout(()=>{referidos=Math.floor(Math.random()*5);updateBalance();},3000);
     
     function gameLoop(t){
@@ -216,8 +174,6 @@
         let grad=ctx.createRadialGradient(canvas.width/2,canvas.height/2,0,canvas.width/2,canvas.height/2,canvas.height);
         grad.addColorStop(0,'#0a1a30');grad.addColorStop(.5,'#03030f');grad.addColorStop(1,'#000005');
         ctx.fillStyle=grad;ctx.fillRect(0,0,canvas.width,canvas.height);
-        
-        // Nebulosa
         ctx.fillStyle='rgba(0,100,200,.02)';
         for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(canvas.width*(.3+i*.2),canvas.height*(.4+i*.1),canvas.width*.4,0,Math.PI*2);ctx.fill();}
         
@@ -225,51 +181,31 @@
         ctx.globalAlpha=1;
         
         if(gameRunning){
-            currentX+=(targetX-currentX)*.08;
-            nave.x=Math.max(30,Math.min(canvas.width-30,currentX));
-            
-            if(t-lastShot>disparoInterval){
-                lastShot=t;
-                let n=balasPorNivel[disparoNv-1],sp=n>1?10:0;
-                for(let i=0;i<n;i++){balas.push({x:nave.x+(i-(n-1)/2)*sp,y:nave.y-30,v:7+disparoNv*.5});}
-            }
-            
+            currentX+=(targetX-currentX)*.08;nave.x=Math.max(30,Math.min(canvas.width-30,currentX));
+            if(t-lastShot>disparoInterval){lastShot=t;let n=balasPorNivel[disparoNv-1],sp=n>1?10:0;for(let i=0;i<n;i++)balas.push({x:nave.x+(i-(n-1)/2)*sp,y:nave.y-30,v:7+disparoNv*.5});}
             let freq=Math.max(.015,.04-score/8000)*dificultadBase;
             if(Math.random()<freq)asteroides.push({x:Math.random()*canvas.width,y:-30,r:12+Math.random()*28*dificultadBase,v:(gameSpeed+Math.random()*2.5)*dificultadBase,rot:0,rotV:Math.random()*.06-.03,c:`hsl(${20+Math.random()*20},${40+Math.random()*30}%,${25+Math.random()*25}%)`});
             
-            for(let i=balas.length-1;i>=0;i--){
-                balas[i].y-=balas[i].v;
-                ctx.shadowColor='#00e5ff';ctx.shadowBlur=12;ctx.fillStyle='#fff';
-                ctx.fillRect(balas[i].x-2,balas[i].y-10,4,20);ctx.shadowBlur=0;
-                if(balas[i].y<-20)balas.splice(i,1);
-            }
+            for(let i=balas.length-1;i>=0;i--){balas[i].y-=balas[i].v;ctx.shadowColor='#00e5ff';ctx.shadowBlur=12;ctx.fillStyle='#fff';ctx.fillRect(balas[i].x-2,balas[i].y-10,4,20);ctx.shadowBlur=0;if(balas[i].y<-20)balas.splice(i,1);}
             
             for(let i=asteroides.length-1;i>=0;i--){
                 let a=asteroides[i];a.y+=a.v;a.rot+=a.rotV;
                 ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.rot);
-                ctx.shadowColor='rgba(0,229,255,.4)';ctx.shadowBlur=10;
-                ctx.fillStyle=a.c;ctx.beginPath();
+                ctx.shadowColor='rgba(0,229,255,.4)';ctx.shadowBlur=10;ctx.fillStyle=a.c;ctx.beginPath();
                 let pts=8,ang=0;ctx.moveTo(Math.cos(ang)*a.r,Math.sin(ang)*a.r);
                 for(let j=1;j<pts;j++){ang+=Math.PI*2/pts;ctx.lineTo(Math.cos(ang)*a.r*(.7+Math.random()*.3),Math.sin(ang)*a.r*(.7+Math.random()*.3));}
-                ctx.closePath();ctx.fill();
-                ctx.strokeStyle='rgba(0,229,255,.6)';ctx.lineWidth=1.5;ctx.stroke();
-                ctx.shadowBlur=0;ctx.restore();
+                ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(0,229,255,.6)';ctx.lineWidth=1.5;ctx.stroke();ctx.shadowBlur=0;ctx.restore();
                 
                 if(Math.abs(a.x-nave.x)<a.r+25&&Math.abs(a.y-nave.y)<a.r+25){
                     if(escudoActivo&&escudoNv>0){escudoActivo=false;asteroides.splice(i,1);continue;}
-                    gameRunning=false;
-                    document.getElementById('gameOver').style.display='block';
+                    gameRunning=false;document.getElementById('gameOver').style.display='block';
                     document.getElementById('finalScore').textContent=score;
-                    let earned=Math.floor(score/10000)*10;
-                    document.getElementById('earnedStars').textContent=earned;
-                    balance+=earned;totalStars+=earned;updateBalance();
-                    score=0;
+                    let earned=Math.floor(score/10000)*10;document.getElementById('earnedStars').textContent=earned;
+                    balance+=earned;totalStars+=earned;updateBalance();score=0;
                 }
-                
                 for(let j=balas.length-1;j>=0;j--){
                     if(Math.abs(balas[j].x-a.x)<a.r+6&&Math.abs(balas[j].y-a.y)<a.r+6){
-                        balas.splice(j,1);asteroides.splice(i,1);score+=10;
-                        document.getElementById('score').textContent=score;
+                        balas.splice(j,1);asteroides.splice(i,1);score+=10;document.getElementById('score').textContent=score;
                         for(let k=0;k<8;k++)explosiones.push({x:a.x+(Math.random()-.5)*20,y:a.y+(Math.random()-.5)*20,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:15+Math.random()*15});
                         updateUI();break;
                     }
@@ -277,28 +213,18 @@
                 if(asteroides[i]&&asteroides[i].y>canvas.height+50)asteroides.splice(i,1);
             }
             
-            for(let i=explosiones.length-1;i>=0;i--){
-                let e=explosiones[i];e.x+=e.vx;e.y+=e.vy;e.life--;
-                ctx.fillStyle=`rgba(255,${150+Math.random()*105},0,${e.life/30})`;ctx.beginPath();ctx.arc(e.x,e.y,3,0,Math.PI*2);ctx.fill();
-                if(e.life<=0)explosiones.splice(i,1);
-            }
+            for(let i=explosiones.length-1;i>=0;i--){let e=explosiones[i];e.x+=e.vx;e.y+=e.vy;e.life--;ctx.fillStyle=`rgba(255,${150+Math.random()*105},0,${e.life/30})`;ctx.beginPath();ctx.arc(e.x,e.y,3,0,Math.PI*2);ctx.fill();if(e.life<=0)explosiones.splice(i,1);}
         }
         
-        // Nave
-        ctx.save();ctx.translate(nave.x,nave.y);
-        let tilt=(targetX-nave.x)*.03;ctx.rotate(tilt*.3);
+        ctx.save();ctx.translate(nave.x,nave.y);let tilt=(targetX-nave.x)*.03;ctx.rotate(tilt*.3);
         ctx.shadowColor='#00e5ff';ctx.shadowBlur=25;
-        let bg=ctx.createLinearGradient(0,-30,0,20);
-        bg.addColorStop(0,'#e0f0ff');bg.addColorStop(.3,'#00b0e0');bg.addColorStop(1,'#004080');
-        ctx.fillStyle=bg;
-        ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(-18,18);ctx.lineTo(-8,8);ctx.lineTo(0,12);ctx.lineTo(8,8);ctx.lineTo(18,18);ctx.closePath();ctx.fill();
+        let bg=ctx.createLinearGradient(0,-30,0,20);bg.addColorStop(0,'#e0f0ff');bg.addColorStop(.3,'#00b0e0');bg.addColorStop(1,'#004080');
+        ctx.fillStyle=bg;ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(-18,18);ctx.lineTo(-8,8);ctx.lineTo(0,12);ctx.lineTo(8,8);ctx.lineTo(18,18);ctx.closePath();ctx.fill();
         ctx.fillStyle='rgba(0,229,255,.3)';ctx.beginPath();ctx.arc(0,-5,8,0,Math.PI*2);ctx.fill();
         ctx.shadowColor='#ff6600';ctx.shadowBlur=30;
-        let eg=ctx.createLinearGradient(0,10,0,22);
-        eg.addColorStop(0,'#ffaa00');eg.addColorStop(1,'#ff3300');
+        let eg=ctx.createLinearGradient(0,10,0,22);eg.addColorStop(0,'#ffaa00');eg.addColorStop(1,'#ff3300');
         ctx.fillStyle=eg;ctx.beginPath();ctx.moveTo(-6,14);ctx.lineTo(0,22);ctx.lineTo(6,14);ctx.closePath();ctx.fill();
         ctx.shadowBlur=0;ctx.restore();
-        
         requestAnimationFrame(gameLoop);
     }
     requestAnimationFrame(gameLoop);
