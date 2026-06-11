@@ -1,0 +1,12 @@
+{
+  "name": "space-fortune-bot",
+  "version": "1.0.0",
+  "description": "Space Fortune - Juega y gana estrellas",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0"
+  }
+}
