@@ -7,380 +7,335 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --gold: #ffd700; --gold2: #ffaa00; --purple: #8844ff;
-            --cyan: #00d2ff; --green: #00ff88; --bg: #0a0a18;
+            --bg: #0a0a14;
+            --neon: #00e5ff;
+            --neon2: #0072ff;
+            --gold: #ffd700;
+            --pink: #ff2d78;
+            --green: #00e676;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             background:var(--bg); overflow:hidden; touch-action:none; user-select:none;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            width:100vw; height:100vh;
+            font-family: 'Rajdhani', 'Segoe UI', Arial, sans-serif;
+            color:#fff;
         }
         
-        /* Canvas del juego */
-        #gameCanvas {
-            position:fixed; top:0; left:0; width:100%; height:100%; z-index:1;
-        }
-        
-        /* Nebulosas de fondo */
-        .nebula {
-            position:fixed; border-radius:50%; filter:blur(60px); opacity:0.3; z-index:0;
-        }
-        .nebula-1 { width:300px; height:300px; background:#4a0080; top:10%; left:-20%; }
-        .nebula-2 { width:250px; height:250px; background:#002288; bottom:20%; right:-15%; }
-        .nebula-3 { width:200px; height:200px; background:#880044; top:50%; left:50%; }
-        
-        /* UI Superior */
-        #ui-top {
-            position:fixed; top:16px; left:16px; right:16px; display:flex;
-            justify-content:space-between; z-index:100; pointer-events:none;
-        }
-        .capsule {
-            padding:10px 18px; border-radius:25px; font-size:14px; font-weight:700;
-            backdrop-filter:blur(15px); pointer-events:auto; letter-spacing:0.5px;
-        }
-        .capsule-score {
-            background:rgba(255,215,0,0.12); color:var(--gold);
-            border:1px solid rgba(255,215,0,0.25);
-        }
-        .capsule-stars {
-            background:rgba(255,255,255,0.06); color:#fff;
-            border:1px solid rgba(255,255,255,0.12);
-        }
-        .pop { animation:popAnim 0.35s ease-out; }
-        @keyframes popAnim {
-            0%{transform:scale(1.35)} 100%{transform:scale(1)}
-        }
-        
-        /* Botón PLAY central */
-        #playBtn {
-            position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:130px; height:130px; z-index:50; cursor:pointer;
-            background:radial-gradient(circle,#ffd700,#b8860b);
-            border-radius:50%; border:6px solid rgba(255,215,0,0.3);
-            box-shadow:0 0 40px rgba(255,215,0,0.5), 0 0 80px rgba(255,215,0,0.2);
-            color:#1a1a1a; font-weight:900; font-size:18px;
-            text-transform:uppercase; letter-spacing:2px;
-            display:flex; align-items:center; justify-content:center;
-            transition:0.2s; animation:pulse 2s infinite;
-        }
-        #playBtn:active { transform:translate(-50%,-50%) scale(0.9); }
-        #playBtn.hidden { display:none; }
-        @keyframes pulse {
-            0%,100%{box-shadow:0 0 40px rgba(255,215,0,0.5),0 0 80px rgba(255,215,0,0.2)}
-            50%{box-shadow:0 0 60px rgba(255,215,0,0.8),0 0 120px rgba(255,215,0,0.4)}
-        }
-        
-        /* Navegación inferior */
-        #footer-nav {
-            position:fixed; bottom:0; left:0; width:100%; height:85px;
-            display:flex; justify-content:space-around; align-items:center;
-            background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,transparent 100%);
-            padding:0 10px 12px; z-index:100;
-        }
-        .nav-btn {
-            width:58px; height:58px; background:rgba(26,26,26,0.85);
-            border:2px solid rgba(255,255,255,0.1); border-radius:16px;
-            display:flex; flex-direction:column; align-items:center;
-            justify-content:center; transition:0.2s; cursor:pointer;
-            color:#aaa; font-size:10px; font-weight:600;
-            backdrop-filter:blur(10px);
-        }
-        .nav-btn:active { transform:scale(0.9); border-color:var(--gold); color:var(--gold); }
-        .nav-btn .icon { font-size:22px; margin-bottom:2px; }
-        
-        /* Game Over */
-        #gameOver {
-            display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            z-index:200; background:rgba(5,5,25,0.94); padding:32px;
-            border-radius:28px; border:1px solid rgba(255,255,255,0.1);
-            text-align:center; backdrop-filter:blur(15px); color:#fff;
-        }
-        #gameOver h2 {
-            font-size:30px; font-weight:900;
-            background:linear-gradient(135deg,#ff4757,#ff6b81);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-            margin-bottom:10px;
-        }
-        #gameOver p { color:#bbb; font-size:16px; margin:5px 0; }
-        #gameOver button {
-            padding:14px 32px; font-size:15px; border:none; border-radius:30px;
-            margin:8px 5px; cursor:pointer; font-weight:700; transition:0.2s;
-        }
-        .btn-play { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#000; }
-        .btn-roulette { background:linear-gradient(135deg,var(--purple),#6622cc); color:#fff; }
-        
-        /* Paneles modales */
-        .modal {
+        /* SISTEMA DE VISTAS */
+        .view {
             display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            z-index:300; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px);
-            justify-content:center; align-items:center;
+            overflow-y:auto; z-index:10;
         }
-        .modal.active { display:flex; }
-        .modal-content {
-            background:rgba(10,10,30,0.96); padding:24px; border-radius:24px;
-            border:1px solid rgba(255,255,255,0.1); color:#fff;
-            width:88%; max-width:380px; max-height:78vh; overflow-y:auto;
-            text-align:center; position:relative;
+        .view.active { display:flex; flex-direction:column; align-items:center; }
+        
+        /* VISTA JUEGO */
+        #game-view {
+            background:var(--bg); justify-content:center; align-items:center;
         }
-        .modal-content h3 {
-            font-size:20px; font-weight:800; margin-bottom:14px;
-            background:linear-gradient(135deg,var(--gold),var(--gold2));
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        #gameCanvas { display:block; position:absolute; top:0; left:0; }
+        
+        /* HUD Tecnológico */
+        #hud {
+            position:absolute; top:16px; left:16px; right:16px;
+            display:flex; justify-content:space-between; z-index:20; pointer-events:none;
         }
-        .modal-close {
-            position:absolute; top:12px; right:16px; background:none;
-            border:none; color:#aaa; font-size:22px; cursor:pointer;
+        .hud-panel {
+            background:rgba(10,10,30,0.8); border:1px solid rgba(0,229,255,0.3);
+            border-radius:12px; padding:8px 16px; font-family:'Courier New',monospace;
+            font-size:14px; font-weight:bold; color:var(--neon);
+            text-shadow:0 0 10px rgba(0,229,255,0.5); pointer-events:auto;
+        }
+        .hud-stars { border-color:rgba(255,215,0,0.3); color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,0.5); }
+        
+        /* Barra de Navegación Flotante */
+        .bottom-nav {
+            position:fixed; bottom:0; width:100%; height:70px;
+            background:rgba(10,10,20,0.95); border-top:1px solid rgba(255,255,255,0.1);
+            display:flex; justify-content:space-around; align-items:center;
+            z-index:999; padding-bottom:8px;
+        }
+        .bottom-nav button {
+            background:none; border:none; color:#556; font-size:10px;
+            display:flex; flex-direction:column; align-items:center; gap:4px;
+            cursor:pointer; transition:0.3s; font-family:'Rajdhani',sans-serif; font-weight:600;
+        }
+        .bottom-nav button:active { color:var(--neon); }
+        .bottom-nav button .nav-icon { font-size:22px; }
+        
+        /* Botón PLAY sobresaliente */
+        .play-nav-btn {
+            background:linear-gradient(180deg, #00e5ff, #0072ff) !important;
+            width:60px; height:60px; border-radius:50%; margin-top:-35px;
+            box-shadow:0 0 30px rgba(0,229,255,0.5); position:relative;
+            color:#000 !important; font-size:12px !important; font-weight:900 !important;
+            border:3px solid rgba(255,255,255,0.3) !important;
+        }
+        .play-nav-btn .nav-icon { font-size:28px !important; }
+        
+        /* Vistas de Secciones */
+        .section-content {
+            width:90%; max-width:400px; margin-top:60px; margin-bottom:90px;
+            background:rgba(10,10,25,0.9); border:1px solid rgba(0,229,255,0.15);
+            border-radius:20px; padding:24px; text-align:center;
+        }
+        .section-content h3 {
+            font-family:'Courier New',monospace; font-size:20px; color:var(--neon);
+            text-shadow:0 0 15px rgba(0,229,255,0.4); margin-bottom:16px;
+            letter-spacing:2px;
+        }
+        .card {
+            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+            border-radius:14px; padding:14px; margin:10px 0;
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .btn {
+            padding:10px 20px; border:none; border-radius:25px; font-weight:700;
+            cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:14px;
+            letter-spacing:1px; transition:0.3s;
+        }
+        .btn-gold { background:linear-gradient(135deg,var(--gold),#ffaa00); color:#000; }
+        .btn-neon { background:linear-gradient(135deg,var(--neon),var(--neon2)); color:#000; }
+        .btn-green { background:linear-gradient(135deg,var(--green),#00aa55); color:#000; }
+        .btn-pink { background:linear-gradient(135deg,var(--pink),#cc0044); color:#fff; }
+        input {
+            width:100%; padding:12px; margin:8px 0; border-radius:10px;
+            border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05);
+            color:#fff; font-size:14px; font-family:'Rajdhani',sans-serif;
         }
         
-        .item-card {
-            background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:14px;
-            margin:8px 0; display:flex; justify-content:space-between; align-items:center;
-            border:1px solid rgba(255,255,255,0.05);
+        .game-over-panel {
+            display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            z-index:30; background:rgba(0,0,0,0.9); border:1px solid rgba(255,45,120,0.3);
+            border-radius:20px; padding:30px; text-align:center;
         }
-        .buy-btn {
-            background:linear-gradient(135deg,var(--gold),var(--gold2)); border:none;
-            padding:8px 16px; border-radius:14px; font-weight:700; cursor:pointer; color:#000;
-        }
-        .roulette-tier {
-            background:rgba(255,255,255,0.02); border-radius:14px; padding:12px;
-            margin:10px 0; border:1px solid rgba(255,255,255,0.05);
-        }
-        .roulette-tier h4 { color:var(--gold); margin-bottom:6px; font-size:14px; }
-        .gift-grid { display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-bottom:8px; }
-        .gift-item {
-            background:rgba(255,255,255,0.04); padding:5px 8px; border-radius:8px; font-size:11px;
-        }
-        .action-btn {
-            width:100%; padding:14px; border:none; border-radius:16px;
-            font-weight:700; font-size:15px; cursor:pointer; margin:8px 0;
-        }
-        .deposit-btn { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#000; }
-        .withdraw-action { background:linear-gradient(135deg,var(--green),#00aa55); color:#000; }
-        .join-btn { background:linear-gradient(135deg,var(--cyan),#0088cc); color:#fff; }
-        input {
-            width:100%; padding:12px; margin:10px 0; border-radius:12px;
-            border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06);
-            color:#fff; font-size:15px;
-        }
+        .game-over-panel h2 { font-family:'Courier New',monospace; color:var(--pink); font-size:24px; margin-bottom:10px; }
     </style>
 </head>
 <body>
-    <div class="nebula nebula-1"></div>
-    <div class="nebula nebula-2"></div>
-    <div class="nebula nebula-3"></div>
-    
-    <canvas id="gameCanvas"></canvas>
-    
-    <div id="ui-top">
-        <div class="capsule capsule-score" id="scoreCapsule">🎯 <span id="score">0</span></div>
-        <div class="capsule capsule-stars" id="starsCapsule">⭐ <span id="balance">100</span></div>
+
+    <!-- VISTA JUEGO -->
+    <div id="game-view" class="view active">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hud">
+            <div class="hud-panel">🎯 <span id="score">0</span></div>
+            <div class="hud-panel hud-stars">⭐ <span id="balance">100</span></div>
+        </div>
+        <div class="game-over-panel" id="gameOver">
+            <h2>GAME OVER</h2>
+            <p>🎯 <span id="finalScore">0</span> pts</p>
+            <p>⭐ +<span id="earnedStars">0</span></p>
+            <button class="btn btn-gold" onclick="restartGame()" style="margin-top:12px;">JUGAR OTRA VEZ</button>
+        </div>
     </div>
     
-    <div id="playBtn" onclick="startGame()">PLAY</div>
-    
-    <div id="gameOver">
-        <h2>GAME OVER</h2>
-        <p>🎯 <span id="finalScore">0</span> pts</p>
-        <p>⭐ +<span id="earnedStars">0</span> estrellas</p>
-        <button class="btn-play" onclick="location.reload()">JUGAR</button>
-        <button class="btn-roulette" onclick="openModal('ruleta')">RULETA</button>
+    <!-- VISTA PERFIL -->
+    <div id="perfil-view" class="view">
+        <div class="section-content">
+            <h3>👤 PERFIL</h3>
+            <p id="userName" style="font-size:18px;margin-bottom:10px;"></p>
+            <p>⭐ Saldo: <span id="perfilBalance">100</span></p>
+            <p>🏅 Nivel: Bronce</p>
+            <button class="btn btn-neon" onclick="unirseCanal()" style="margin-top:15px;width:100%;">📢 UNIRSE A @PaperplaneFeed (+100)</button>
+        </div>
     </div>
     
-    <div id="footer-nav">
-        <div class="nav-btn" onclick="openModal('perfil')"><span class="icon">👤</span>PERFIL</div>
-        <div class="nav-btn" onclick="openModal('ranking')"><span class="icon">🏆</span>RANKING</div>
-        <div class="nav-btn" onclick="openModal('ruleta')"><span class="icon">🎰</span>RULETA</div>
-        <div class="nav-btn" onclick="openModal('mejoras')"><span class="icon">🛡️</span>MEJORAS</div>
-        <div class="nav-btn" onclick="openModal('billetera')"><span class="icon">💰</span>BILLETERA</div>
+    <!-- VISTA RULETA -->
+    <div id="ruleta-view" class="view">
+        <div class="section-content">
+            <h3>🎰 RULETA DE REGALOS</h3>
+            <div class="card" style="flex-direction:column;gap:8px;">
+                <strong>50⭐ — REGALOS TELEGRAM</strong>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+                    <span style="background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:8px;font-size:11px;">🎁 15⭐</span>
+                    <span style="background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:8px;font-size:11px;">🎁 25⭐</span>
+                    <span style="background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:8px;font-size:11px;">🛡️ Escudo</span>
+                    <span style="background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:8px;font-size:11px;">❌ Nada</span>
+                </div>
+                <button class="btn btn-gold" onclick="girarRuleta(50)">🎰 GIRAR (50⭐)</button>
+            </div>
+            <div class="card" style="flex-direction:column;gap:8px;">
+                <strong>100⭐ — REGALOS PREMIUM</strong>
+                <button class="btn btn-gold" onclick="girarRuleta(100)">🎰 GIRAR (100⭐)</button>
+            </div>
+            <div class="card" style="flex-direction:column;gap:8px;">
+                <strong>150⭐ — REGALOS DELUXE</strong>
+                <button class="btn btn-gold" onclick="girarRuleta(150)">🎰 GIRAR (150⭐)</button>
+            </div>
+            <p id="ruletaResult" style="color:var(--gold);margin-top:10px;font-family:'Courier New',monospace;"></p>
+        </div>
     </div>
     
-    <!-- MODALES -->
-    <div id="modal-perfil" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>PERFIL</h3><p id="userName"></p><p>⭐ <span id="perfilBalance">100</span></p><p>🏅 <span id="nivel">Bronce</span></p><button class="action-btn join-btn" onclick="unirseCanal()">📢 UNIRSE A @PaperplaneFeed (+100)</button></div></div>
-    <div id="modal-ranking" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>RANKING</h3><p>🥇 50⭐ | 🥈 25⭐ | 🥉 15⭐</p></div></div>
-    <div id="modal-ruleta" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>RULETA DE REGALOS</h3>
-        <div class="roulette-tier"><h4>50⭐ — REGALOS TELEGRAM</h4><div class="gift-grid"><span class="gift-item">🎁 15⭐</span><span class="gift-item">🎁 25⭐</span><span class="gift-item">🛡️ Escudo</span><span class="gift-item">❌ Nada</span></div><button class="buy-btn" onclick="girarRuleta(50)">🎰 GIRAR (50⭐)</button></div>
-        <div class="roulette-tier"><h4>100⭐ — REGALOS PREMIUM</h4><div class="gift-grid"><span class="gift-item">🎁 50⭐</span><span class="gift-item">🎁 75⭐</span><span class="gift-item">⚡ Nitro</span><span class="gift-item">💎 100⭐</span></div><button class="buy-btn" onclick="girarRuleta(100)">🎰 GIRAR (100⭐)</button></div>
-        <div class="roulette-tier"><h4>150⭐ — REGALOS DELUXE</h4><div class="gift-grid"><span class="gift-item">🎁 100⭐</span><span class="gift-item">🚀 Nave Prem</span><span class="gift-item">💎 200⭐</span><span class="gift-item">🎁 Gift Col.</span></div><button class="buy-btn" onclick="girarRuleta(150)">🎰 GIRAR (150⭐)</button></div>
-        <p id="ruletaResult" style="margin-top:10px;color:var(--gold);font-weight:700;"></p>
-    </div></div>
-    <div id="modal-mejoras" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>MEJORAS</h3>
-        <div class="item-card"><span>🛡️ Escudo</span><button class="buy-btn" onclick="comprar('escudo',25)">25⭐</button></div>
-        <div class="item-card"><span>⚡ Nitro</span><button class="buy-btn" onclick="comprar('nitro',15)">15⭐</button></div>
-        <div class="item-card"><span>💎 x2 Puntos</span><button class="buy-btn" onclick="comprar('x2',20)">20⭐</button></div>
-        <div class="item-card"><span>🚀 Nave Premium</span><button class="buy-btn" onclick="comprar('nave',150)">150⭐</button></div>
-    </div></div>
-    <div id="modal-billetera" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>BILLETERA</h3><p>⭐ <span id="walletBalance">100</span></p>
-        <button class="action-btn deposit-btn" onclick="openModal('deposito')">💳 DEPOSITAR</button>
-        <button class="action-btn withdraw-action" onclick="openModal('retiro')">📤 RETIRAR (mín 100⭐)</button>
-    </div></div>
-    <div id="modal-deposito" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>DEPOSITAR</h3><input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)"><button class="action-btn deposit-btn" onclick="depositar()">💳 DEPOSITAR</button></div></div>
-    <div id="modal-retiro" class="modal"><div class="modal-content"><button class="modal-close" onclick="closeModals()">✕</button><h3>RETIRAR</h3><input type="number" id="withdrawAmount" placeholder="Mínimo 100⭐"><button class="action-btn withdraw-action" onclick="retirar()">📤 RETIRAR COMO REGALO</button></div></div>
+    <!-- VISTA MEJORAS -->
+    <div id="mejoras-view" class="view">
+        <div class="section-content">
+            <h3>🛡️ MEJORAS</h3>
+            <div class="card"><span>🛡️ Escudo</span><button class="btn btn-gold" onclick="comprar('escudo',25)">25⭐</button></div>
+            <div class="card"><span>⚡ Nitro</span><button class="btn btn-gold" onclick="comprar('nitro',15)">15⭐</button></div>
+            <div class="card"><span>💎 x2 Puntos</span><button class="btn btn-gold" onclick="comprar('x2',20)">20⭐</button></div>
+            <div class="card"><span>🚀 Nave Premium</span><button class="btn btn-gold" onclick="comprar('nave',150)">150⭐</button></div>
+        </div>
+    </div>
+    
+    <!-- VISTA BILLETERA -->
+    <div id="billetera-view" class="view">
+        <div class="section-content">
+            <h3>💰 BILLETERA</h3>
+            <p>⭐ Saldo: <span id="walletBalance">100</span></p>
+            <button class="btn btn-gold" onclick="showView('deposito')" style="width:100%;margin:8px 0;">💳 DEPOSITAR</button>
+            <button class="btn btn-green" onclick="showView('retiro')" style="width:100%;margin:8px 0;">📤 RETIRAR (mín 100⭐)</button>
+        </div>
+    </div>
+    
+    <!-- VISTA DEPÓSITO -->
+    <div id="deposito-view" class="view">
+        <div class="section-content">
+            <h3>💳 DEPOSITAR</h3>
+            <input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)">
+            <button class="btn btn-gold" onclick="depositar()" style="width:100%;">💳 DEPOSITAR</button>
+        </div>
+    </div>
+    
+    <!-- VISTA RETIRO -->
+    <div id="retiro-view" class="view">
+        <div class="section-content">
+            <h3>📤 RETIRAR</h3>
+            <input type="number" id="withdrawAmount" placeholder="Mínimo 100⭐">
+            <button class="btn btn-green" onclick="retirar()" style="width:100%;">📤 RETIRAR COMO REGALO</button>
+        </div>
+    </div>
+    
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="bottom-nav">
+        <button onclick="showView('perfil')"><span class="nav-icon">👤</span>PERFIL</button>
+        <button onclick="showView('ruleta')"><span class="nav-icon">🎰</span>RULETA</button>
+        <button onclick="showView('game')" class="play-nav-btn"><span class="nav-icon">▶</span>PLAY</button>
+        <button onclick="showView('mejoras')"><span class="nav-icon">🛡️</span>MEJORAS</button>
+        <button onclick="showView('billetera')"><span class="nav-icon">💰</span>BILLETERA</button>
+    </nav>
     
     <script>
         const tg = window.Telegram.WebApp; tg.expand(); tg.ready();
         document.getElementById('userName').textContent = tg.initDataUnsafe?.user?.first_name || 'Jugador';
-        
-        let balance = 100, score = 0, gameRunning = false, shipX = 0, escudo = false;
-        let ship = { x: 200, y: 500, w: 50, h: 40 };
-        let asteroids = [], stars = [];
-        
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let balance = 100, score = 0, gameRunning = true, escudo = false;
+        let targetX = 0, currentX = 0;
         
         function updateBalance() {
             document.getElementById('balance').textContent = balance;
             document.getElementById('perfilBalance').textContent = balance;
             document.getElementById('walletBalance').textContent = balance;
         }
-        function popElement(id) {
-            const el = document.getElementById(id);
-            el.classList.add('pop');
-            setTimeout(() => el.classList.remove('pop'), 350);
+        
+        function showView(name) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(name + '-view').classList.add('active');
+            if (name !== 'game') gameRunning = false;
+            else { gameRunning = true; document.getElementById('gameOver').style.display = 'none'; }
         }
-        function openModal(id) { closeModals(); document.getElementById('modal-' + id).classList.add('active'); }
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
-        function unirseCanal() { window.open('https://t.me/PaperplaneFeed', '_blank'); score += 100; document.getElementById('score').textContent = score; popElement('scoreCapsule'); }
+        
+        function restartGame() {
+            score = 0; gameRunning = true; escudo = false;
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('score').textContent = '0';
+        }
+        
+        function unirseCanal() { window.open('https://t.me/PaperplaneFeed', '_blank'); score += 100; document.getElementById('score').textContent = score; }
         
         function comprar(item, precio) {
-            if (balance >= precio) { balance -= precio; updateBalance(); popElement('starsCapsule'); if (item === 'escudo') escudo = true; alert('✅ ¡' + item + ' comprado!'); }
+            if (balance >= precio) { balance -= precio; updateBalance(); alert('✅ ¡' + item + ' comprado!'); if (item === 'escudo') escudo = true; }
             else alert('❌ Estrellas insuficientes');
         }
         
         function girarRuleta(precio) {
             if (balance < precio) { alert('❌ Necesitas ' + precio + '⭐'); return; }
-            balance -= precio; updateBalance(); popElement('starsCapsule');
-            const premios = {
-                50: ['🎁 Regalo 15⭐', '🎁 Regalo 25⭐', '🛡️ Escudo', '❌ Sin premio'],
-                100: ['🎁 Regalo 50⭐', '🎁 Regalo 75⭐', '⚡ Nitro', '💎 100⭐'],
-                150: ['🎁 Regalo 100⭐', '🚀 Nave Premium', '💎 200⭐', '🎁 Gift Colección']
-            };
-            const r = premios[precio][Math.floor(Math.random() * 4)];
+            balance -= precio; updateBalance();
+            const premios = { 50: ['🎁 15⭐', '🎁 25⭐', '🛡️ Escudo', '❌ Nada'], 100: ['🎁 50⭐', '🎁 75⭐', '⚡ Nitro', '💎 100⭐'], 150: ['🎁 100⭐', '🚀 Nave Prem', '💎 200⭐', '🎁 Gift Col.'] };
+            const r = premios[precio][Math.floor(Math.random()*4)];
             document.getElementById('ruletaResult').textContent = '🎯 ' + r;
-            const ganancia = parseInt(r.match(/\d+/)?.[0] || 0);
-            if (ganancia) { balance += ganancia; updateBalance(); popElement('starsCapsule'); }
+            const g = parseInt(r.match(/\d+/)?.[0] || 0);
+            if (g) { balance += g; updateBalance(); }
         }
         
         function depositar() {
-            const amount = parseInt(document.getElementById('depositAmount').value);
-            if (amount >= 10) { balance += amount; updateBalance(); popElement('starsCapsule'); alert('✅ +' + amount + '⭐'); }
+            const a = parseInt(document.getElementById('depositAmount').value);
+            if (a >= 10) { balance += a; updateBalance(); alert('✅ +' + a + '⭐'); }
         }
         
         function retirar() {
-            const amount = parseInt(document.getElementById('withdrawAmount').value);
-            if (amount >= 100 && balance >= amount) { balance -= amount; updateBalance(); tg.sendData(JSON.stringify({ action: 'withdraw', amount })); alert('✅ Recibirás un regalo de ' + amount + '⭐'); }
+            const a = parseInt(document.getElementById('withdrawAmount').value);
+            if (a >= 100 && balance >= a) { balance -= a; updateBalance(); tg.sendData(JSON.stringify({action:'withdraw',amount:a})); alert('✅ Recibirás un regalo de ' + a + '⭐'); }
         }
         
-        function startGame() {
-            document.getElementById('playBtn').classList.add('hidden');
-            gameRunning = true;
-            score = 0;
-            ship = { x: canvas.width / 2, y: canvas.height - 120, w: 44, h: 36 };
-            asteroids = [];
-            stars = [];
-            for (let i = 0; i < 60; i++) {
-                stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 0.5, speed: Math.random() * 1.5 + 0.3 });
-            }
-            loop();
-        }
+        // ===== MOTOR 2D CANVAS =====
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         
-        function drawShip() {
+        let nave = { x: canvas.width/2, y: canvas.height-150, w: 50, h: 40, angle: 0 };
+        let asteroides = [];
+        let estrellas = [];
+        for (let i=0; i<150; i++) estrellas.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2+0.5, v:Math.random()*1+0.2 });
+        
+        document.addEventListener('touchmove', e => { e.preventDefault(); targetX = e.touches[0].clientX; });
+        document.addEventListener('mousemove', e => { targetX = e.clientX; });
+        
+        function dibujarNave(x, y) {
             ctx.save();
-            ctx.translate(ship.x, ship.y);
-            // Nave estilo ilustración 2D
-            ctx.fillStyle = '#00d2ff';
-            ctx.shadowColor = '#00d2ff';
-            ctx.shadowBlur = 15;
+            ctx.translate(x, y);
+            // Inclinación (tilt)
+            let tilt = (targetX - x) * 0.05;
+            ctx.rotate(tilt * 0.3);
+            // Cuerpo neón
+            ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 15;
+            ctx.fillStyle = '#00e5ff';
             ctx.beginPath();
-            ctx.moveTo(0, -22); // Nariz
-            ctx.lineTo(-18, 18); // Ala izquierda
-            ctx.lineTo(0, 10);
-            ctx.lineTo(18, 18); // Ala derecha
-            ctx.closePath();
-            ctx.fill();
+            ctx.moveTo(0, -25); ctx.lineTo(-20, 15); ctx.lineTo(0, 5); ctx.lineTo(20, 15);
+            ctx.closePath(); ctx.fill();
             // Motor
+            ctx.shadowColor = '#ff6600'; ctx.shadowBlur = 20;
             ctx.fillStyle = '#ff6600';
-            ctx.shadowColor = '#ff6600';
-            ctx.shadowBlur = 10;
-            ctx.fillRect(-6, 14, 12, 8 + Math.sin(Date.now() * 0.02) * 4);
+            ctx.beginPath(); ctx.arc(0, 12, 6, 0, Math.PI*2); ctx.fill();
+            ctx.shadowBlur = 0;
             ctx.restore();
         }
         
-        function drawAsteroid(a) {
-            ctx.save();
-            ctx.translate(a.x, a.y);
-            ctx.fillStyle = '#887766';
-            ctx.shadowColor = '#000';
-            ctx.shadowBlur = 5;
-            ctx.beginPath();
-            const sides = a.sides || 7;
-            for (let i = 0; i < sides; i++) {
-                const angle = (i / sides) * Math.PI * 2;
-                const r = a.size + Math.sin(i * 2.5) * 4;
-                const px = Math.cos(angle) * r;
-                const py = Math.sin(angle) * r;
-                if (i === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
-        
-        function spawnAsteroid() {
-            asteroids.push({
-                x: Math.random() * canvas.width,
-                y: -40,
-                size: 15 + Math.random() * 25,
-                speed: 1.5 + Math.random() * 3,
-                sides: 5 + Math.floor(Math.random() * 5)
-            });
-        }
-        
-        function loop() {
-            if (!gameRunning) return;
+        function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             // Estrellas
             ctx.fillStyle = '#fff';
-            stars.forEach(s => {
-                ctx.globalAlpha = 0.6 + Math.random() * 0.4;
-                ctx.fillRect(s.x, s.y, s.size, s.size);
-                s.y += s.speed;
-                if (s.y > canvas.height) { s.y = -5; s.x = Math.random() * canvas.width; }
-            });
+            estrellas.forEach(e => { e.y += e.v; if (e.y > canvas.height) { e.y = 0; e.x = Math.random()*canvas.width; } ctx.globalAlpha = e.s/3; ctx.fillRect(e.x, e.y, e.s, e.s); });
             ctx.globalAlpha = 1;
             
-            drawShip();
-            
-            if (Math.random() < 0.02) spawnAsteroid();
-            
-            asteroids.forEach((a, i) => {
-                a.y += a.speed;
-                a.x += Math.sin(a.y * 0.01) * 0.5;
-                drawAsteroid(a);
+            if (gameRunning) {
+                // Lerp suave
+                currentX += (targetX - currentX) * 0.08;
+                nave.x = currentX;
+                if (nave.x < 30) nave.x = 30;
+                if (nave.x > canvas.width-30) nave.x = canvas.width-30;
                 
-                const dx = Math.abs(a.x - ship.x);
-                const dy = Math.abs(a.y - ship.y);
-                if (dx < ship.w * 0.8 && dy < ship.h * 0.8) {
-                    if (escudo) { escudo = false; asteroids.splice(i, 1); return; }
-                    gameRunning = false;
-                    document.getElementById('gameOver').style.display = 'block';
-                    document.getElementById('finalScore').textContent = score;
-                    const earned = Math.floor(score / 10);
-                    document.getElementById('earnedStars').textContent = earned;
-                    balance += earned; updateBalance();
+                // Asteroides
+                if (Math.random() < 0.02) asteroides.push({ x:Math.random()*canvas.width, y:-30, r:15+Math.random()*25, v:2+Math.random()*3 });
+                for (let i=asteroides.length-1; i>=0; i--) {
+                    let a = asteroides[i];
+                    a.y += a.v;
+                    ctx.fillStyle = '#8B7355'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill();
+                    ctx.strokeStyle = '#5C4033'; ctx.lineWidth = 2; ctx.stroke();
+                    if (Math.abs(a.x-nave.x) < a.r+20 && Math.abs(a.y-nave.y) < a.r+20) {
+                        if (escudo) { escudo = false; asteroides.splice(i,1); continue; }
+                        gameRunning = false;
+                        document.getElementById('gameOver').style.display = 'block';
+                        document.getElementById('finalScore').textContent = score;
+                        let earned = Math.floor(score/5);
+                        document.getElementById('earnedStars').textContent = earned;
+                        balance += earned; updateBalance();
+                    }
+                    if (a.y > canvas.height+50) { asteroides.splice(i,1); score += 5; document.getElementById('score').textContent = score; }
                 }
-                if (a.y > canvas.height + 50) { asteroids.splice(i, 1); score += 10; document.getElementById('score').textContent = score; }
-            });
-            
-            requestAnimationFrame(loop);
+            }
+            dibujarNave(nave.x, nave.y);
+            requestAnimationFrame(gameLoop);
         }
-        
-        document.addEventListener('touchmove', e => { e.preventDefault(); if (gameRunning) ship.x = e.touches[0].clientX; });
-        document.addEventListener('mousemove', e => { if (gameRunning) ship.x = e.clientX; });
+        gameLoop();
     </script>
 </body>
 </html>
