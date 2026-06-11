@@ -8,46 +8,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Squada+One&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:#05070a;--neon:#00fbff;--neon2:#0072ff;--gold:#ffd700;--pink:#ff2d78;--green:#00e676;--tgblue:#2481cc;
+            --bg:#03030f;--neon:#00e5ff;--neon2:#0060ff;--gold:#ffd700;--pink:#ff2d78;--green:#00e676;--tgblue:#2481cc;
         }
         *{margin:0;padding:0;box-sizing:border-box}
         body{background:var(--bg);overflow:hidden;touch-action:none;user-select:none;font-family:'Squada One','Orbitron',sans-serif;color:#fff}
         
         .view{display:none;position:fixed;top:0;left:0;width:100%;height:100%;overflow-y:auto;z-index:10}
         .view.active{display:flex;flex-direction:column;align-items:center}
-        #game-view{background:radial-gradient(circle at center,#1a1a2e 0%,#0a0a12 100%);justify-content:center;align-items:center}
-        #gameCanvas{display:block;position:absolute;top:0;left:0;box-shadow:inset 0 0 100px rgba(0,251,255,.15)}
+        #game-view{background:radial-gradient(ellipse at center,#0d1b2a 0%,#03030f 70%);justify-content:center;align-items:center}
+        #gameCanvas{display:block;position:absolute;top:0;left:0}
         
         #hud{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:20;pointer-events:none}
-        .hud-box{background:rgba(5,7,10,.8);border:1px solid rgba(0,251,255,.3);border-radius:10px;padding:8px 16px;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--neon);text-shadow:0 0 10px rgba(0,251,255,.5);pointer-events:auto}
-        .hud-stars{border-color:rgba(255,215,0,.3);color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,.5)}
+        .hud-box{background:rgba(3,3,15,.85);border:1px solid rgba(0,229,255,.35);border-radius:10px;padding:8px 16px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--neon);text-shadow:0 0 10px rgba(0,229,255,.5);pointer-events:auto}
+        .hud-stars{border-color:rgba(255,215,0,.35);color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,.5)}
         
-        #gameOver{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:30;background:rgba(0,0,0,.9);border:1px solid rgba(255,45,120,.3);border-radius:20px;padding:30px;text-align:center}
+        #gameOver{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:30;background:rgba(0,0,0,.92);border:1px solid rgba(255,45,120,.3);border-radius:20px;padding:30px;text-align:center}
         #gameOver h2{font-family:'Orbitron',monospace;color:var(--pink);font-size:22px;margin-bottom:10px}
         
         .footer-menu{position:fixed;bottom:15px;left:5%;width:90%;height:65px;background:rgba(0,0,0,.75);backdrop-filter:blur(15px);border-radius:25px;border:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-around;align-items:center;z-index:999;padding:0 10px}
         .footer-menu button{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:.3s;color:#667;font-size:10px;background:none;border:none;font-family:'Squada One',sans-serif}
         .footer-menu button:active{color:var(--neon);transform:translateY(-3px)}
         .footer-menu button .icon{font-size:20px}
-        .play-circle{width:65px;height:65px;border-radius:50%;background:linear-gradient(180deg,var(--neon),var(--neon2));margin-top:-40px;border:4px solid var(--bg);box-shadow:0 0 30px rgba(0,251,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.3s}
-        .play-circle:active{transform:scale(.95);box-shadow:0 0 50px rgba(0,251,255,.8)}
+        .play-circle{width:65px;height:65px;border-radius:50%;background:linear-gradient(180deg,var(--neon),var(--neon2));margin-top:-40px;border:4px solid var(--bg);box-shadow:0 0 30px rgba(0,229,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.3s}
+        .play-circle:active{transform:scale(.95);box-shadow:0 0 50px rgba(0,229,255,.8)}
         .play-text{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;color:#000}
         
-        .section-panel{width:88%;max-width:380px;margin-top:50px;margin-bottom:90px;background:rgba(10,10,25,.9);border:1px solid rgba(0,251,255,.12);border-radius:20px;padding:24px;text-align:center}
-        .section-panel h3{font-family:'Orbitron',monospace;font-size:18px;color:var(--neon);text-shadow:0 0 15px rgba(0,251,255,.3);margin-bottom:16px;letter-spacing:2px}
-        .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;align-items:center}
+        .section-panel{width:88%;max-width:380px;margin-top:50px;margin-bottom:90px;background:rgba(5,5,20,.92);border:1px solid rgba(0,229,255,.12);border-radius:20px;padding:24px;text-align:center}
+        .section-panel h3{font-family:'Orbitron',monospace;font-size:18px;color:var(--neon);text-shadow:0 0 15px rgba(0,229,255,.3);margin-bottom:16px;letter-spacing:2px}
+        .card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
         .btn{padding:10px 20px;border:none;border-radius:25px;font-weight:700;cursor:pointer;font-family:'Squada One',sans-serif;font-size:15px;letter-spacing:1px;transition:.3s}
         .btn-gold{background:linear-gradient(135deg,var(--gold),#ffaa00);color:#000}
         .btn-neon{background:linear-gradient(135deg,var(--neon),var(--neon2));color:#000}
         .btn-green{background:linear-gradient(135deg,var(--green),#00aa55);color:#000}
-        .btn-telegram{background:var(--tgblue);color:#fff;padding:15px 30px;border-radius:12px;font-weight:700;text-align:center;width:90%;margin:10px auto;border:none;box-shadow:0 4px 15px rgba(36,129,204,.4)}
         input{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;font-size:14px;font-family:'Squada One',sans-serif}
+        .level-bar{width:100%;height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin:4px 0;overflow:hidden}
+        .level-fill{height:100%;background:var(--neon);border-radius:3px;transition:.3s}
         
-        .gift-item{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.05);cursor:pointer;transition:.3s;filter:drop-shadow(0 5px 10px rgba(0,0,0,.3))}
-        .gift-item:hover{transform:scale(1.15) rotate(5deg)}
-        .gift-premium{border:2px solid var(--gold);background:rgba(255,215,0,.1)}
-        .gift-legend{border:2px solid var(--neon);background:rgba(0,251,255,.1);animation:glow 1.5s infinite}
-        @keyframes glow{0%,100%{box-shadow:0 0 10px var(--neon)}50%{box-shadow:0 0 30px var(--neon)}}
+        .warning-msg{color:var(--pink);font-size:12px;margin:8px 0;padding:8px;background:rgba(255,45,120,.1);border-radius:8px;border:1px solid rgba(255,45,120,.2)}
     </style>
 </head>
 <body>
@@ -56,45 +53,43 @@
     <canvas id="gameCanvas"></canvas>
     <div id="hud">
         <div class="hud-box">🎯 <span id="score">0</span></div>
+        <div class="hud-box">💥 <span id="nivelDisp">Disp 1</span></div>
         <div class="hud-box hud-stars">⭐ <span id="balance">100</span></div>
     </div>
     <div id="gameOver">
         <h2>GAME OVER</h2>
-        <p>🎯 <span id="finalScore">0</span></p>
-        <p>⭐ +<span id="earnedStars">0</span></p>
+        <p>🎯 <span id="finalScore">0</span> pts</p>
+        <p>⭐ +<span id="earnedStars">0</span> estrellas</p>
+        <p style="font-size:12px;color:#aaa;">Progreso de puntos reiniciado</p>
         <button class="btn btn-gold" onclick="restartGame()" style="margin-top:12px;">JUGAR OTRA VEZ</button>
     </div>
 </div>
 
-<div id="perfil-view" class="view"><div class="section-panel"><h3>👤 PERFIL</h3><p id="userName" style="font-size:18px;margin-bottom:10px;"></p><p>⭐ <span id="perfilBalance">100</span></p><p>🏅 <span id="nivel">Bronce</span></p><p>🎮 Puntos totales: <span id="totalPoints">0</span></p><button class="btn btn-neon" onclick="unirseCanal()" style="width:100%;margin-top:12px;">📢 UNIRSE A @PaperplaneFeed (+100)</button></div></div>
+<div id="perfil-view" class="view"><div class="section-panel"><h3>👤 PERFIL</h3><p id="userName" style="font-size:18px;margin-bottom:10px;"></p><p>⭐ Saldo: <span id="perfilBalance">100</span></p><p>🏅 Nivel: <span id="nivelJugador">1</span></p><p>💎 Total ganado: <span id="totalStars">0</span>⭐</p><div class="warning-msg">⚠️ Al salir del juego pierdes los puntos de la partida actual</div><button class="btn btn-neon" onclick="unirseCanal()" style="width:100%;margin-top:12px;">📢 UNIRSE A @PaperplaneFeed (+100 pts)</button></div></div>
 
-<div id="ruleta-view" class="view"><div class="section-panel"><h3>🎰 RULETA DE REGALOS</h3>
-    <div style="display:flex;justify-content:center;gap:10px;margin:15px 0;flex-wrap:wrap">
-        <div class="gift-item" onclick="comprarRegalo(0)">⭐<br>Básico<br><small>Gratis</small></div>
-        <div class="gift-item gift-premium" onclick="comprarRegalo(1)">🦆<br>Premium<br><small>50⭐</small></div>
-        <div class="gift-item gift-legend" onclick="comprarRegalo(2)">💎<br>Legend<br><small>200⭐</small></div>
-    </div>
-    <div class="card" style="flex-direction:column;gap:8px;"><strong>50⭐ — REGALOS TELEGRAM</strong><button class="btn btn-gold" onclick="girarRuleta(50)">🎰 GIRAR (50⭐)</button></div>
-    <div class="card" style="flex-direction:column;gap:8px;"><strong>100⭐ — PREMIUM</strong><button class="btn btn-gold" onclick="girarRuleta(100)">🎰 GIRAR (100⭐)</button></div>
-    <div class="card" style="flex-direction:column;gap:8px;"><strong>150⭐ — DELUXE</strong><button class="btn btn-gold" onclick="girarRuleta(150)">🎰 GIRAR (150⭐)</button></div>
+<div id="ruleta-view" class="view"><div class="section-panel"><h3>🎰 RULETA</h3>
+    <div class="card" style="flex-direction:column;gap:8px;"><strong>50⭐</strong><button class="btn btn-gold" onclick="girarRuleta(50)">GIRAR</button></div>
+    <div class="card" style="flex-direction:column;gap:8px;"><strong>100⭐</strong><button class="btn btn-gold" onclick="girarRuleta(100)">GIRAR</button></div>
+    <div class="card" style="flex-direction:column;gap:8px;"><strong>150⭐</strong><button class="btn btn-gold" onclick="girarRuleta(150)">GIRAR</button></div>
     <p id="ruletaResult" style="color:var(--gold);margin-top:10px;font-family:'Orbitron',monospace;"></p>
 </div></div>
 
-<div id="mejoras-view" class="view"><div class="section-panel"><h3>🛡️ MEJORAS</h3>
-    <div class="card"><span>🛡️ Escudo</span><button class="btn btn-gold" onclick="comprar('escudo',25)">25⭐</button></div>
-    <div class="card"><span>⚡ Nitro</span><button class="btn btn-gold" onclick="comprar('nitro',15)">15⭐</button></div>
-    <div class="card"><span>💎 x2 Puntos</span><button class="btn btn-gold" onclick="comprar('x2',20)">20⭐</button></div>
-    <div class="card"><span>🚀 Nave Premium</span><button class="btn btn-gold" onclick="comprar('nave',150)">150⭐</button></div>
+<div id="mejoras-view" class="view"><div class="section-panel"><h3>🛡️ MEJORAS POR NIVEL</h3>
+    <div class="warning-msg">💡 Sin mejoras, el juego es más difícil. ¡Mejora para avanzar más rápido!</div>
+    <div class="card"><span>🛡️ Escudo Nv.<span id="escudoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="escudoBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnEscudo" onclick="comprar('escudo')">25⭐</button></div>
+    <div class="card"><span>⚡ Nitro Nv.<span id="nitroNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="nitroBar" style="width:33%"></div></div></div><button class="btn btn-gold" id="btnNitro" onclick="comprar('nitro')">15⭐</button></div>
+    <div class="card"><span>💥 Disparo Nv.<span id="disparoNv">1</span></span><div style="width:100%"><div class="level-bar"><div class="level-fill" id="disparoBar" style="width:20%"></div></div></div><button class="btn btn-gold" id="btnDisparo" onclick="comprar('disparo')">10⭐</button></div>
 </div></div>
 
-<div id="billetera-view" class="view"><div class="section-panel"><h3>💰 BILLETERA</h3><p>⭐ <span id="walletBalance">100</span></p>
+<div id="billetera-view" class="view"><div class="section-panel"><h3>💰 BILLETERA</h3><p>⭐ Saldo: <span id="walletBalance">100</span></p>
     <button class="btn btn-gold" onclick="showView('deposito')" style="width:100%;margin:8px 0;">💳 DEPOSITAR</button>
-    <button class="btn btn-green" onclick="showView('retiro')" style="width:100%;margin:8px 0;">📤 RETIRAR (mín 100⭐)</button>
+    <button class="btn btn-green" onclick="showView('retiro')" style="width:100%;margin:8px 0;">📤 RETIRAR (mín 50⭐)</button>
+    <p style="font-size:11px;color:#aaa;">10,000 pts = 10⭐ al hacer Game Over</p>
 </div></div>
 
 <div id="deposito-view" class="view"><div class="section-panel"><h3>💳 DEPOSITAR</h3><input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)"><button class="btn btn-gold" onclick="depositar()" style="width:100%;">💳 DEPOSITAR</button></div></div>
 
-<div id="retiro-view" class="view"><div class="section-panel"><h3>📤 RETIRAR</h3><input type="number" id="withdrawAmount" placeholder="Mínimo 100⭐"><button class="btn btn-green" onclick="retirar()" style="width:100%;">📤 RETIRAR COMO REGALO</button></div></div>
+<div id="retiro-view" class="view"><div class="section-panel"><h3>📤 RETIRAR</h3><input type="number" id="withdrawAmount" placeholder="Mínimo 50⭐"><button class="btn btn-green" onclick="retirar()" style="width:100%;">📤 RETIRAR COMO REGALO</button></div></div>
 
 <nav class="footer-menu">
     <button onclick="showView('perfil')"><span class="icon">👤</span>Perfil</button>
@@ -107,138 +102,210 @@
 <script>
     const tg=window.Telegram.WebApp;tg.expand();tg.ready();
     document.getElementById('userName').textContent=tg.initDataUnsafe?.user?.first_name||'Jugador';
-    let balance=100,score=0,gameRunning=true,escudo=false,multiplicador=1,regaloActivo=0,gameSpeed=2,targetX=window.innerWidth/2,currentX=window.innerWidth/2,totalPoints=0;
     
-    const regalos=[{nombre:'Estrella Básica',precio:0,mult:1},{nombre:'Pato Premium',precio:50,mult:2},{nombre:'Diamante Legend',precio:200,mult:5}];
+    let balance=100,score=0,totalStars=0,gameRunning=true,targetX=window.innerWidth/2,currentX=window.innerWidth/2,partidaActual=0;
+    let escudoNv=1,nitroNv=1,disparoNv=1,escudoActivo=false,gameSpeed=2,disparoInterval=800,lastShot=0;
+    
+    const precios={escudo:[25,75,200],nitro:[15,50,150],disparo:[10,30,80,150,300]};
+    const maxNiveles={escudo:3,nitro:3,disparo:5};
+    const balasPorNivel=[1,2,3,4,6];
+    
+    // Dificultad base sin mejoras
+    let dificultadBase=1.5; // Más difícil si no tiene mejoras
+    
+    function calcDificultad(){
+        let totalMejoras=escudoNv+nitroNv+disparoNv;
+        if(totalMejoras<=3) return 2.0; // Muy difícil sin mejoras
+        if(totalMejoras<=6) return 1.3; // Medio
+        return 1.0; // Normal con mejoras
+    }
     
     function updateBalance(){
         document.getElementById('balance').textContent=balance;
         document.getElementById('perfilBalance').textContent=balance;
         document.getElementById('walletBalance').textContent=balance;
+        document.getElementById('totalStars').textContent=totalStars;
     }
+    
+    function updateUI(){
+        document.getElementById('escudoNv').textContent=escudoNv;
+        document.getElementById('nitroNv').textContent=nitroNv;
+        document.getElementById('disparoNv').textContent=disparoNv;
+        document.getElementById('nivelDisp').textContent='Disp '+disparoNv;
+        document.getElementById('nivelJugador').textContent=Math.floor(totalStars/100)+1;
+        
+        document.getElementById('escudoBar').style.width=(escudoNv/maxNiveles.escudo*100)+'%';
+        document.getElementById('nitroBar').style.width=(nitroNv/maxNiveles.nitro*100)+'%';
+        document.getElementById('disparoBar').style.width=(disparoNv/maxNiveles.disparo*100)+'%';
+        
+        document.getElementById('btnEscudo').textContent=escudoNv<maxNiveles.escudo?precios.escudo[escudoNv-1]+'⭐':'MAX';
+        document.getElementById('btnNitro').textContent=nitroNv<maxNiveles.nitro?precios.nitro[nitroNv-1]+'⭐':'MAX';
+        document.getElementById('btnDisparo').textContent=disparoNv<maxNiveles.disparo?precios.disparo[disparoNv-1]+'⭐':'MAX';
+        
+        disparoInterval=800-(disparoNv-1)*120;
+        gameSpeed=2+nitroNv*0.4;
+        dificultadBase=calcDificultad();
+    }
+    updateUI();
     
     function showView(name){
         document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
         document.getElementById(name+'-view').classList.add('active');
-        if(name!=='game')gameRunning=false;
-        else{gameRunning=true;document.getElementById('gameOver').style.display='none';}
+        
+        if(name!=='game'&&gameRunning){
+            // Perder progreso al salir
+            gameRunning=false;
+            let perdido=Math.floor(score/10000)*10;
+            if(perdido>0){
+                balance+=perdido;totalStars+=perdido;
+                alert('⚠️ Saliste del juego. Perdiste '+score+' puntos pero ganaste '+perdido+'⭐ (10,000 pts = 10⭐)');
+            }else{
+                alert('⚠️ Saliste del juego. Progreso de puntos perdido.');
+            }
+            score=0;document.getElementById('score').textContent='0';
+            updateBalance();
+        }
+        if(name==='game'){
+            gameRunning=true;document.getElementById('gameOver').style.display='none';
+        }
     }
     
-    function restartGame(){score=0;gameRunning=true;escudo=false;document.getElementById('gameOver').style.display='none';document.getElementById('score').textContent='0';gameSpeed=2;}
+    function restartGame(){score=0;gameRunning=true;escudoActivo=false;document.getElementById('gameOver').style.display='none';document.getElementById('score').textContent='0';}
     function unirseCanal(){window.open('https://t.me/PaperplaneFeed','_blank');score+=100;document.getElementById('score').textContent=score;}
     
-    function comprar(item,precio){
-        if(balance>=precio){balance-=precio;updateBalance();alert('✅ ¡'+item+' comprado!');if(item==='escudo')escudo=true;if(item==='nave')gameSpeed-=0.5;}
-        else alert('❌ Estrellas insuficientes');
-    }
-    
-    function comprarRegalo(id){
-        const r=regalos[id];
-        if(balance>=r.precio){balance-=r.precio;updateBalance();multiplicador=r.mult;regaloActivo=id;alert('✅ ¡'+r.nombre+' activado! x'+r.mult+' puntos');}
-        else alert('❌ Necesitas '+r.precio+'⭐');
+    function comprar(tipo){
+        let nv,precio,max;
+        if(tipo==='escudo'){nv=escudoNv;precio=precios.escudo[nv-1];max=maxNiveles.escudo;}
+        else if(tipo==='nitro'){nv=nitroNv;precio=precios.nitro[nv-1];max=maxNiveles.nitro;}
+        else{nv=disparoNv;precio=precios.disparo[nv-1];max=maxNiveles.disparo;}
+        
+        if(nv>=max){alert('✅ Nivel máximo alcanzado');return;}
+        if(balance<precio){alert('❌ Necesitas '+precio+'⭐');return;}
+        
+        balance-=precio;updateBalance();
+        if(tipo==='escudo')escudoNv++;
+        else if(tipo==='nitro')nitroNv++;
+        else disparoNv++;
+        updateUI();
+        alert('✅ ¡'+tipo+' mejorado a nivel '+(nv+1)+'!');
     }
     
     function girarRuleta(precio){
         if(balance<precio){alert('❌ Necesitas '+precio+'⭐');return;}
         balance-=precio;updateBalance();
-        const premios={50:['🎁 15⭐','🎁 25⭐','🛡️ Escudo','❌ Nada'],100:['🎁 50⭐','🎁 75⭐','⚡ Nitro','💎 100⭐'],150:['🎁 100⭐','🚀 Nave Prem','💎 200⭐','🎁 Gift Col.']};
-        const r=premios[precio][Math.floor(Math.random()*4)];
+        const p={50:['🎁 15⭐','🎁 25⭐','🛡️ Escudo','❌ Nada'],100:['🎁 50⭐','🎁 75⭐','⚡ Nitro','💎 100⭐'],150:['🎁 100⭐','🚀 Nave Prem','💎 200⭐','🎁 Gift Col.']};
+        const r=p[precio][Math.floor(Math.random()*4)];
         document.getElementById('ruletaResult').textContent='🎯 '+r;
-        const g=parseInt(r.match(/\d+/)?.[0]||0);if(g){balance+=g;updateBalance();}
+        const g=parseInt(r.match(/\d+/)?.[0]||0);if(g){balance+=g;totalStars+=g;updateBalance();}
     }
     
-    function depositar(){const a=parseInt(document.getElementById('depositAmount').value);if(a>=10){balance+=a;updateBalance();alert('✅ +'+a+'⭐');}}
-    function retirar(){const a=parseInt(document.getElementById('withdrawAmount').value);if(a>=100&&balance>=a){balance-=a;updateBalance();tg.sendData(JSON.stringify({action:'withdraw',amount:a}));alert('✅ Regalo de '+a+'⭐');}}
+    function depositar(){const a=parseInt(document.getElementById('depositAmount').value);if(a>=10){balance+=a;totalStars+=a;updateBalance();alert('✅ +'+a+'⭐');}}
+    function retirar(){const a=parseInt(document.getElementById('withdrawAmount').value);if(a>=50&&balance>=a){balance-=a;updateBalance();tg.sendData(JSON.stringify({action:'withdraw',amount:a}));alert('✅ Regalo de '+a+'⭐');}else alert('❌ Mínimo 50⭐ o saldo insuficiente');}
     
     // CANVAS
     const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d');
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;
     let nave={x:canvas.width/2,y:canvas.height-150,w:50,h:40};
     let asteroides=[],estrellas=[],balas=[],explosiones=[];
-    for(let i=0;i<200;i++)estrellas.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,s:Math.random()*2+.5,v:Math.random()*1+.2});
+    for(let i=0;i<250;i++)estrellas.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,s:Math.random()*2+.3,v:Math.random()*.8+.1});
     
     document.addEventListener('touchmove',e=>{e.preventDefault();targetX=e.touches[0].clientX;});
     document.addEventListener('mousemove',e=>{targetX=e.clientX;});
     
-    // Disparar al tocar
-    document.addEventListener('click',()=>{if(gameRunning)balas.push({x:nave.x,y:nave.y-30,v:8});});
-    
-    function crearExplosion(x,y){explosiones.push({x,y,r:5,opacity:1});}
-    
-    function gameLoop(){
+    function gameLoop(timestamp){
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        estrellas.forEach(e=>{e.y+=e.v;if(e.y>canvas.height){e.y=0;e.x=Math.random()*canvas.width;}ctx.fillStyle='#fff';ctx.globalAlpha=e.s/3;ctx.fillRect(e.x,e.y,e.s,e.s);});
+        
+        let grad=ctx.createRadialGradient(canvas.width/2,canvas.height/2,0,canvas.width/2,canvas.height/2,canvas.height);
+        grad.addColorStop(0,'#0d1b2a');grad.addColorStop(1,'#03030f');
+        ctx.fillStyle=grad;ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        estrellas.forEach(e=>{e.y+=e.v;if(e.y>canvas.height){e.y=0;e.x=Math.random()*canvas.width;}ctx.fillStyle='#fff';ctx.globalAlpha=e.s/4;ctx.fillRect(e.x,e.y,e.s,e.s);});
         ctx.globalAlpha=1;
         
         if(gameRunning){
             currentX+=(targetX-currentX)*.08;
             nave.x=Math.max(30,Math.min(canvas.width-30,currentX));
             
-            // Dificultad progresiva
-            let freq=Math.max(0.01,0.03-score/5000);
-            if(Math.random()<freq)asteroides.push({x:Math.random()*canvas.width,y:-30,r:15+Math.random()*25,v:gameSpeed+Math.random()*2,rot:0,rotV:Math.random()*.05-.025});
+            if(timestamp-lastShot>disparoInterval){
+                lastShot=timestamp;
+                let numBalas=balasPorNivel[disparoNv-1];
+                let spread=numBalas>1?10:0;
+                for(let i=0;i<numBalas;i++){
+                    let bx=nave.x+(i-(numBalas-1)/2)*spread;
+                    balas.push({x:bx,y:nave.y-30,v:7+disparoNv*0.5});
+                }
+            }
             
-            // Balas
+            let freq=Math.max(0.015,0.04-score/8000)*dificultadBase;
+            if(Math.random()<freq)asteroides.push({x:Math.random()*canvas.width,y:-30,r:12+Math.random()*28*dificultadBase,v:(gameSpeed+Math.random()*2.5)*dificultadBase,rot:0,rotV:Math.random()*.06-.03,color:`hsl(${20+Math.random()*20},${40+Math.random()*30}%,${25+Math.random()*25}%)`});
+            
             for(let i=balas.length-1;i>=0;i--){
                 balas[i].y-=balas[i].v;
-                ctx.shadowColor='#00fbff';ctx.shadowBlur=10;ctx.fillStyle='#fff';
-                ctx.fillRect(balas[i].x-2,balas[i].y-8,4,16);ctx.shadowBlur=0;
+                ctx.shadowColor='#00e5ff';ctx.shadowBlur=12;ctx.fillStyle='#fff';
+                ctx.fillRect(balas[i].x-2,balas[i].y-10,4,20);ctx.shadowBlur=0;
                 if(balas[i].y<-20)balas.splice(i,1);
             }
             
-            // Meteoritos + colisiones
             for(let i=asteroides.length-1;i>=0;i--){
                 let a=asteroides[i];a.y+=a.v;a.rot+=a.rotV;
                 ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.rot);
-                ctx.shadowColor='#00fbff';ctx.shadowBlur=8;ctx.fillStyle='#2d3436';
-                ctx.beginPath();ctx.arc(0,0,a.r,0,Math.PI*2);ctx.fill();
-                ctx.strokeStyle='#00fbff';ctx.lineWidth=1.5;ctx.stroke();ctx.shadowBlur=0;ctx.restore();
+                ctx.shadowColor='rgba(0,229,255,.4)';ctx.shadowBlur=10;
+                ctx.fillStyle=a.color;ctx.beginPath();
+                let pts=8,ang=0;
+                ctx.moveTo(Math.cos(ang)*a.r,Math.sin(ang)*a.r);
+                for(let j=1;j<pts;j++){ang+=Math.PI*2/pts;let rr=a.r*(.7+Math.random()*.3);ctx.lineTo(Math.cos(ang)*rr,Math.sin(ang)*rr);}
+                ctx.closePath();ctx.fill();
+                ctx.strokeStyle='rgba(0,229,255,.6)';ctx.lineWidth=1.5;ctx.stroke();
+                ctx.shadowBlur=0;ctx.restore();
                 
-                // Colisión con nave
                 if(Math.abs(a.x-nave.x)<a.r+25&&Math.abs(a.y-nave.y)<a.r+25){
-                    if(escudo){escudo=false;asteroides.splice(i,1);continue;}
+                    if(escudoActivo&&escudoNv>0){escudoActivo=false;asteroides.splice(i,1);continue;}
                     gameRunning=false;
                     document.getElementById('gameOver').style.display='block';
                     document.getElementById('finalScore').textContent=score;
-                    let earned=Math.floor(score/5);
+                    let earned=Math.floor(score/10000)*10;
                     document.getElementById('earnedStars').textContent=earned;
-                    balance+=earned;updateBalance();
+                    balance+=earned;totalStars+=earned;updateBalance();
+                    score=0;
                 }
                 
-                // Colisión con balas
                 for(let j=balas.length-1;j>=0;j--){
-                    if(Math.abs(balas[j].x-a.x)<a.r+5&&Math.abs(balas[j].y-a.y)<a.r+5){
+                    if(Math.abs(balas[j].x-a.x)<a.r+6&&Math.abs(balas[j].y-a.y)<a.r+6){
                         balas.splice(j,1);asteroides.splice(i,1);
-                        score+=10*multiplicador;totalPoints+=10*multiplicador;
+                        score+=10;
                         document.getElementById('score').textContent=score;
-                        document.getElementById('totalPoints').textContent=totalPoints;
-                        crearExplosion(a.x,a.y);
-                        gameSpeed=2+(score/100)*0.5;
+                        for(let k=0;k<8;k++)explosiones.push({x:a.x+(Math.random()-.5)*20,y:a.y+(Math.random()-.5)*20,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:15+Math.random()*15});
+                        updateUI();
                         break;
                     }
                 }
-                if(asteroides[i]&&asteroides[i].y>canvas.height+50){asteroides.splice(i,1);}
+                if(asteroides[i]&&asteroides[i].y>canvas.height+50)asteroides.splice(i,1);
             }
             
-            // Explosiones
             for(let i=explosiones.length-1;i>=0;i--){
-                let e=explosiones[i];e.r+=1;e.opacity-=.05;
-                ctx.fillStyle=`rgba(255,165,0,${e.opacity})`;ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,Math.PI*2);ctx.fill();
-                if(e.opacity<=0)explosiones.splice(i,1);
+                let e=explosiones[i];e.x+=e.vx;e.y+=e.vy;e.life--;
+                ctx.fillStyle=`rgba(255,${150+Math.random()*105},0,${e.life/30})`;ctx.beginPath();ctx.arc(e.x,e.y,3,0,Math.PI*2);ctx.fill();
+                if(e.life<=0)explosiones.splice(i,1);
             }
         }
         
-        // Nave
         ctx.save();ctx.translate(nave.x,nave.y);
         let tilt=(targetX-nave.x)*.03;ctx.rotate(tilt*.3);
-        ctx.shadowColor='#00fbff';ctx.shadowBlur=20;ctx.fillStyle='#00fbff';
-        ctx.beginPath();ctx.moveTo(0,-25);ctx.lineTo(-20,15);ctx.lineTo(0,5);ctx.lineTo(20,15);ctx.closePath();ctx.fill();
-        ctx.shadowColor='#ff6600';ctx.shadowBlur=25;ctx.fillStyle='#ff6600';
-        ctx.beginPath();ctx.arc(0,12,6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.restore();
+        ctx.shadowColor='#00e5ff';ctx.shadowBlur=25;
+        let bodyGrad=ctx.createLinearGradient(0,-30,0,20);
+        bodyGrad.addColorStop(0,'#e0f0ff');bodyGrad.addColorStop(.3,'#00b0e0');bodyGrad.addColorStop(1,'#004080');
+        ctx.fillStyle=bodyGrad;
+        ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(-18,18);ctx.lineTo(-8,8);ctx.lineTo(0,12);ctx.lineTo(8,8);ctx.lineTo(18,18);ctx.closePath();ctx.fill();
+        ctx.fillStyle='rgba(0,229,255,.3)';ctx.beginPath();ctx.arc(0,-5,8,0,Math.PI*2);ctx.fill();
+        ctx.shadowColor='#ff6600';ctx.shadowBlur=30;
+        let engineGrad=ctx.createLinearGradient(0,10,0,22);
+        engineGrad.addColorStop(0,'#ffaa00');engineGrad.addColorStop(1,'#ff3300');
+        ctx.fillStyle=engineGrad;ctx.beginPath();ctx.moveTo(-6,14);ctx.lineTo(0,22);ctx.lineTo(6,14);ctx.closePath();ctx.fill();
+        ctx.shadowBlur=0;ctx.restore();
         
         requestAnimationFrame(gameLoop);
     }
-    gameLoop();
+    requestAnimationFrame(gameLoop);
 </script>
 </body>
 </html>
