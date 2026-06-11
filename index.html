@@ -2,11 +2,187 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Space Fortune</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a2e;
+            overflow: hidden;
+            touch-action: none;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas { display: block; }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 20px;
+            z-index: 10;
+        }
+        #score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            color: white;
+        }
+        #gameOver h2 {
+            font-size: 36px;
+            color: #ff4757;
+        }
+        #gameOver button {
+            padding: 15px 40px;
+            font-size: 18px;
+            background: #ffd700;
+            border: none;
+            border-radius: 25px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1>🚀 Space Fortune</h1>
-    <p>Mini App en construcción</p>
+    <div id="ui">
+        <span>⭐ </span><span id="score">0</span>
+    </div>
+    <div id="gameOver">
+        <h2>💥 GAME OVER</h2>
+        <p>Puntuación: <span id="finalScore">0</span></p>
+        <button onclick="location.reload()">🔄 JUGAR DE NUEVO</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Three.js setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a2e);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Estrellas de fondo
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 1000;
+        const starsPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount * 3; i += 3) {
+            starsPositions[i] = (Math.random() - 0.5) * 50;
+            starsPositions[i + 1] = (Math.random() - 0.5) * 30;
+            starsPositions[i + 2] = (Math.random() - 0.5) * 20 - 5;
+        }
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // Nave (logo de Telegram simplificado)
+        const shipGeometry = new THREE.ConeGeometry(0.3, 0.8, 4);
+        const shipMaterial = new THREE.MeshPhongMaterial({ color: 0x0088cc });
+        const ship = new THREE.Mesh(shipGeometry, shipMaterial);
+        ship.rotation.x = Math.PI / 2;
+        scene.add(ship);
+
+        // Luces
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 0, 5);
+        scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        // Asteroides
+        const asteroids = [];
+        const asteroidGeometry = new THREE.DodecahedronGeometry(0.3);
+
+        // Variables del juego
+        let score = 0;
+        let gameRunning = true;
+        let shipX = 0;
+
+        // Controles táctiles
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!gameRunning) return;
+            const touch = e.touches[0];
+            const x = (touch.clientX / window.innerWidth) * 2 - 1;
+            shipX = x * 3;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!gameRunning) return;
+            const x = (e.clientX / window.innerWidth) * 2 - 1;
+            shipX = x * 3;
+        });
+
+        // Crear asteroides
+        function createAsteroid() {
+            const asteroid = new THREE.Mesh(asteroidGeometry, new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff }));
+            asteroid.position.x = (Math.random() - 0.5) * 6;
+            asteroid.position.y = 5;
+            asteroid.position.z = -2;
+            scene.add(asteroid);
+            asteroids.push(asteroid);
+        }
+
+        // Game loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (!gameRunning) return;
+            
+            // Mover nave
+            ship.position.x += (shipX - ship.position.x) * 0.1;
+            ship.position.x = Math.max(-2.5, Math.min(2.5, ship.position.x));
+            
+            // Mover estrellas
+            stars.rotation.y += 0.0005;
+            
+            // Crear asteroides aleatoriamente
+            if (Math.random() < 0.02) createAsteroid();
+            
+            // Mover asteroides
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                asteroids[i].position.y -= 0.05;
+                asteroids[i].rotation.x += 0.02;
+                
+                // Colisión
+                if (Math.abs(asteroids[i].position.x - ship.position.x) < 0.5 && asteroids[i].position.y < 0.3 && asteroids[i].position.y > -0.3) {
+                    gameRunning = false;
+                    document.getElementById('gameOver').style.display = 'block';
+                    document.getElementById('finalScore').textContent = score;
+                }
+                
+                // Fuera de pantalla = punto
+                if (asteroids[i].position.y < -4) {
+                    scene.remove(asteroids[i]);
+                    asteroids.splice(i, 1);
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                }
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
 </body>
 </html>
