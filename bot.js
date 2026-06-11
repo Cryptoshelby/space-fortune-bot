@@ -1,4 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
+const http = require('http');
+
 const TOKEN = '8858722616:AAG0uvUfcJXkxT_5mVy8Lq1VK5PQNS_961s';
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -18,8 +20,6 @@ bot.onText(/\/start/, (msg) => {
     );
 });
 
-bot.onText(/\/help/, (msg) => {
-    bot.sendMessage(msg.chat.id, '🎮 *Space Runner* - Esquiva asteroides\n🎰 *Ruleta* - Gira y gana\n💰 /balance - Ver saldo\n💳 /deposit - Depositar');
-});
-
-console.log('🤖 Space Fortune iniciado');
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => { res.end('OK'); }).listen(PORT);
+console.log('🤖 Space Fortune iniciado en puerto ' + PORT);
