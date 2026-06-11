@@ -1,131 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Space Fortune</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: #0a0a1a;
+            --gold: #ffd700;
+            --gold2: #ffaa00;
+            --purple: #8844ff;
+            --cyan: #00ccff;
+            --pink: #ff4488;
+            --green: #00ff88;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
-        body { background: #000011; overflow: hidden; touch-action: none; user-select: none; }
+        body { background: var(--bg); overflow: hidden; touch-action: none; user-select: none; }
         canvas { display: block; }
-        #ui-top { position: absolute; top: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        #score-display { color: #ffd700; font-size: 22px; font-weight: bold; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
-        #stars-display { color: #fff; font-size: 16px; background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 20px; }
-        #menu-bar { position: absolute; bottom: 20px; left: 10px; right: 10px; display: flex; justify-content: space-around; z-index: 10; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); border-radius: 20px; padding: 12px; }
-        .menu-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: #aaa; font-size: 11px; cursor: pointer; }
-        .menu-btn:active { color: #ffd700; transform: scale(0.95); }
-        .menu-btn .icon { font-size: 24px; }
-        #gameOver { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; z-index: 20; background: rgba(0,0,0,0.9); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
-        #gameOver h2 { font-size: 32px; color: #ff4757; margin-bottom: 10px; }
-        #gameOver p { color: #fff; font-size: 18px; margin: 5px 0; }
-        #gameOver button { padding: 12px 30px; font-size: 16px; background: linear-gradient(135deg,#ffd700,#ffaa00); border: none; border-radius: 25px; margin: 8px 5px; cursor: pointer; font-weight: bold; color: #000; }
-        .tab-content { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 20; background: rgba(0,0,0,0.95); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 85%; max-width: 350px; text-align: center; }
+        
+        /* UI Superior */
+        #ui-top { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; z-index: 10; }
+        .badge { padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; backdrop-filter: blur(10px); }
+        .badge-score { background: rgba(255,215,0,0.2); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+        .badge-stars { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        
+        /* Barra inferior */
+        #menu-bar { position: absolute; bottom: 16px; left: 8px; right: 8px; display: flex; justify-content: space-around; z-index: 10; background: rgba(10,10,30,0.85); backdrop-filter: blur(20px); border-radius: 22px; padding: 10px 6px; border: 1px solid rgba(255,255,255,0.1); }
+        .menu-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: #8899aa; font-size: 10px; cursor: pointer; transition: 0.2s; padding: 4px 8px; }
+        .menu-btn:active { color: var(--gold); transform: scale(0.92); }
+        .menu-btn .icon { font-size: 22px; }
+        .menu-btn.primary .icon { color: var(--gold); }
+        
+        /* Game Over */
+        #gameOver { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; z-index: 20; background: rgba(0,0,0,0.92); padding: 28px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); }
+        #gameOver h2 { font-size: 30px; background: linear-gradient(135deg, #ff4757, #ff6b81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        #gameOver p { color: #ccc; font-size: 16px; margin: 4px 0; }
+        #gameOver button { padding: 12px 28px; font-size: 15px; border: none; border-radius: 25px; margin: 6px 4px; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-play { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; }
+        .btn-roulette { background: linear-gradient(135deg, var(--purple), #6622cc); color: #fff; }
+        
+        /* Tabs */
+        .tab-content { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 20; background: rgba(8,8,25,0.96); padding: 22px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.12); color: #fff; width: 88%; max-width: 360px; max-height: 75vh; overflow-y: auto; text-align: center; backdrop-filter: blur(15px); }
         .tab-content.active { display: block; }
-        .tab-content h3 { color: #ffd700; margin-bottom: 15px; font-size: 20px; }
-        .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
-        .item-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; }
-        .buy-btn { background: linear-gradient(135deg,#ffd700,#ffaa00); border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; color: #000; }
-        .withdraw-btn { background: linear-gradient(135deg,#00ff88,#00cc66); border: none; padding: 8px 16px; border-radius: 15px; font-weight: bold; cursor: pointer; color: #000; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; }
-        .action-btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin: 5px 0; }
-        .deposit-btn { background: linear-gradient(135deg,#ffd700,#ffaa00); color: #000; }
-        .withdraw-action { background: linear-gradient(135deg,#00ff88,#00cc66); color: #000; }
+        .tab-content h3 { font-size: 20px; margin-bottom: 12px; background: linear-gradient(135deg, var(--gold), var(--gold2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .close-btn { position: absolute; top: 10px; right: 14px; background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; }
+        
+        /* Cards */
+        .item-card { background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 14px; margin: 7px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.06); }
+        .buy-btn { background: linear-gradient(135deg, var(--gold), var(--gold2)); border: none; padding: 7px 14px; border-radius: 14px; font-weight: 700; cursor: pointer; color: #000; font-size: 13px; }
+        .withdraw-btn { background: linear-gradient(135deg, var(--green), #00aa55); border: none; padding: 7px 14px; border-radius: 14px; font-weight: 700; cursor: pointer; color: #000; font-size: 13px; }
+        
+        /* Ruleta secciones */
+        .roulette-tier { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 10px; margin: 8px 0; border: 1px solid rgba(255,255,255,0.06); }
+        .roulette-tier h4 { font-size: 15px; margin-bottom: 5px; }
+        .gift-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+        .gift-item { background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 10px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .gift-item:active { background: rgba(255,215,0,0.2); }
+        
+        /* Botones de acción */
+        .action-btn { width: 100%; padding: 12px; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 6px 0; transition: 0.2s; }
+        .deposit-btn { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #000; }
+        .withdraw-action { background: linear-gradient(135deg, var(--green), #00aa55); color: #000; }
+        .join-btn { background: linear-gradient(135deg, var(--cyan), #0088cc); color: #fff; }
+        input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 15px; }
+        
+        .star-anim { animation: starPop 0.5s ease-out; }
+        @keyframes starPop { 0% { transform: scale(1.4); color: var(--gold); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
     <div id="ui-top">
-        <div id="score-display">🎯 <span id="score">0</span></div>
-        <div id="stars-display">⭐ <span id="balance">100</span></div>
+        <div class="badge badge-score">🎯 <span id="score">0</span></div>
+        <div class="badge badge-stars">⭐ <span id="balance">100</span></div>
     </div>
+    
     <div id="gameOver">
         <h2>💥 GAME OVER</h2>
-        <p>🎯 Puntuación: <span id="finalScore">0</span></p>
+        <p>🎯 <span id="finalScore">0</span> pts</p>
         <p>⭐ +<span id="earnedStars">0</span> estrellas</p>
-        <button onclick="location.reload()">🔄 JUGAR</button>
-        <button onclick="showTab('ruleta')">🎰 RULETA</button>
+        <button class="btn-play" onclick="location.reload()">🔄 JUGAR OTRA VEZ</button>
+        <button class="btn-roulette" onclick="showTab('ruleta')">🎰 RULETA</button>
     </div>
+    
     <div id="menu-bar">
         <button class="menu-btn" onclick="showTab('perfil')"><span class="icon">👤</span>Perfil</button>
         <button class="menu-btn" onclick="showTab('ranking')"><span class="icon">🏆</span>Ranking</button>
-        <button class="menu-btn" onclick="showTab('ruleta')"><span class="icon">🎰</span>Ruleta</button>
+        <button class="menu-btn primary" onclick="showTab('ruleta')"><span class="icon">🎰</span>Ruleta</button>
         <button class="menu-btn" onclick="showTab('mejoras')"><span class="icon">🛡️</span>Mejoras</button>
         <button class="menu-btn" onclick="showTab('billetera')"><span class="icon">💰</span>Billetera</button>
     </div>
-    <div id="tab-perfil" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>👤 Perfil</h3><p id="userName">Cargando...</p><p>⭐ Saldo: <span id="perfilBalance">100</span></p><p>🏆 Nivel: Bronce</p></div>
-    <div id="tab-ranking" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🏆 Ranking Semanal</h3><p>🥇 5000 pts - Premio: 50⭐</p><p>🥈 3500 pts - Premio: 25⭐</p><p>🥉 2000 pts - Premio: 15⭐</p></div>
-    <div id="tab-ruleta" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🎰 Ruleta</h3><p>🎯 Gira y gana estrellas</p><p>💰 Costo: 10⭐ por tirada</p><button class="action-btn deposit-btn" onclick="girarRuleta()">🎰 GIRAR (10⭐)</button><p id="ruletaResult"></p></div>
-    <div id="tab-mejoras" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🛡️ Mejoras</h3><div class="item-card"><span>🛡️ Escudo</span><button class="buy-btn" onclick="comprar('escudo',25)">25⭐</button></div><div class="item-card"><span>⚡ Nitro</span><button class="buy-btn" onclick="comprar('nitro',15)">15⭐</button></div><div class="item-card"><span>💎 x2 Puntos</span><button class="buy-btn" onclick="comprar('x2',20)">20⭐</button></div><div class="item-card"><span>🚀 Nave Premium</span><button class="buy-btn" onclick="comprar('nave',150)">150⭐</button></div></div>
-    <div id="tab-billetera" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>💰 Billetera</h3><p>⭐ Saldo: <span id="walletBalance">100</span></p><button class="action-btn deposit-btn" onclick="showTab('deposito')">💳 Depositar Estrellas</button><button class="action-btn withdraw-action" onclick="showTab('retiro')">📤 Retirar Estrellas</button><p style="font-size:12px;color:#aaa;margin-top:10px;">Los retiros se envían como regalos de Telegram automáticamente.</p></div>
-    <div id="tab-deposito" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>💳 Depositar Estrellas</h3><p>Compra estrellas para jugar</p><input type="number" id="depositAmount" placeholder="Cantidad (mín 10⭐)"><button class="action-btn deposit-btn" onclick="depositar()">💳 Depositar</button><p style="font-size:11px;color:#aaa;">Pago seguro vía Telegram Stars</p></div>
-    <div id="tab-retiro" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>📤 Retirar Estrellas</h3><p>Recibe tus estrellas como regalo de Telegram</p><input type="number" id="withdrawAmount" placeholder="Cantidad (mín 10⭐)"><button class="action-btn withdraw-action" onclick="retirar()">📤 Retirar como Regalo</button><p style="font-size:11px;color:#aaa;">Recibirás un regalo coleccionable de Telegram</p></div>
-
+    
+    <!-- TABS -->
+    <div id="tab-perfil" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>👤 Perfil</h3><p id="userName">Cargando...</p><p>⭐ Saldo: <span id="perfilBalance">100</span></p><p>🏅 Nivel: <span id="nivel">Bronce</span></p><p>📢 Canal: @PaperplaneFeed</p><button class="action-btn join-btn" onclick="unirseCanal()">📢 Unirse al Canal (+100 pts)</button></div>
+    
+    <div id="tab-ranking" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🏆 Ranking Semanal</h3><p>🥇 1º — 50⭐</p><p>🥈 2º — 25⭐</p><p>🥉 3º — 15⭐</p><p style="color:#aaa;font-size:12px;">Premios automáticos cada domingo</p></div>
+    
+    <div id="tab-ruleta" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🎰 Ruleta de Premios</h3>
+        <div class="roulette-tier" style="border-color:rgba(255,215,0,0.3)">
+            <h4>🥉 Tirada Básica — 10⭐</h4>
+            <div class="gift-grid"><span class="gift-item">💎 50⭐</span><span class="gift-item">⭐ 25⭐</span><span class="gift-item">🛡️ Escudo</span><span class="gift-item">❌ Nada</span></div>
+            <button class="buy-btn" onclick="girarRuleta(10)">🎰 Girar (10⭐)</button>
+        </div>
+        <div class="roulette-tier" style="border-color:rgba(136,68,255,0.3)">
+            <h4>🥈 Tirada Premium — 25⭐</h4>
+            <div class="gift-grid"><span class="gift-item">💎 150⭐</span><span class="gift-item">🎁 Gift Bronce</span><span class="gift-item">⭐ 75⭐</span><span class="gift-item">⚡ Nitro</span></div>
+            <button class="buy-btn" onclick="girarRuleta(25)">🎰 Girar (25⭐)</button>
+        </div>
+        <div class="roulette-tier" style="border-color:rgba(255,68,136,0.3)">
+            <h4>🥇 Tirada Deluxe — 50⭐</h4>
+            <div class="gift-grid"><span class="gift-item">💎 500⭐</span><span class="gift-item">🎁 Gift Plata</span><span class="gift-item">🚀 Nave Prem</span><span class="gift-item">💎 200⭐</span></div>
+            <button class="buy-btn" onclick="girarRuleta(50)">🎰 Girar (50⭐)</button>
+        </div>
+        <p id="ruletaResult" style="margin-top:10px;font-size:14px;color:var(--gold)"></p>
+    </div>
+    
+    <div id="tab-mejoras" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>🛡️ Mejoras</h3>
+        <div class="item-card"><span>🛡️ Escudo</span><button class="buy-btn" onclick="comprar('escudo',25)">25⭐</button></div>
+        <div class="item-card"><span>⚡ Nitro</span><button class="buy-btn" onclick="comprar('nitro',15)">15⭐</button></div>
+        <div class="item-card"><span>💎 x2 Puntos</span><button class="buy-btn" onclick="comprar('x2',20)">20⭐</button></div>
+        <div class="item-card"><span>🚀 Nave Premium</span><button class="buy-btn" onclick="comprar('nave',150)">150⭐</button></div>
+    </div>
+    
+    <div id="tab-billetera" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>💰 Billetera</h3><p>⭐ Saldo: <span id="walletBalance">100</span></p>
+        <button class="action-btn deposit-btn" onclick="showTab('deposito')">💳 Depositar</button>
+        <button class="action-btn withdraw-action" onclick="showTab('retiro')">📤 Retirar (mín 100⭐)</button>
+        <p style="font-size:11px;color:#aaa;margin-top:8px;">Retiros como regalos de Telegram</p>
+    </div>
+    
+    <div id="tab-deposito" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>💳 Depositar</h3><input type="number" id="depositAmount" placeholder="Estrellas (mín 10⭐)"><button class="action-btn deposit-btn" onclick="depositar()">💳 Depositar</button></div>
+    
+    <div id="tab-retiro" class="tab-content"><button class="close-btn" onclick="closeTabs()">✕</button><h3>📤 Retirar Estrellas</h3><p style="font-size:12px;color:#aaa;">Mínimo 100⭐. Recibirás un regalo coleccionable.</p><input type="number" id="withdrawAmount" placeholder="Cantidad (mín 100⭐)"><button class="action-btn withdraw-action" onclick="retirar()">📤 Retirar como Regalo</button></div>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         const tg = window.Telegram.WebApp; tg.expand(); tg.ready();
         document.getElementById('userName').textContent = tg.initDataUnsafe?.user?.first_name || 'Jugador';
-        let balance = 100, score = 0, gameRunning = true, shipX = 0, escudo = false, nitro = false, x2 = false;
-
+        let balance = 100, score = 0, gameRunning = true, shipX = 0, escudo = false;
+        
         function updateBalance() {
             document.getElementById('balance').textContent = balance;
             document.getElementById('perfilBalance').textContent = balance;
             document.getElementById('walletBalance').textContent = balance;
         }
-
+        
+        function unirseCanal() {
+            window.open('https://t.me/PaperplaneFeed', '_blank');
+            score += 100; document.getElementById('score').textContent = score;
+            alert('✅ ¡Gracias por unirte! +100 puntos');
+        }
+        
         function comprar(item, precio) {
-            if (balance >= precio) { balance -= precio; updateBalance(); alert('✅ ¡' + item + ' comprado!'); }
-            else { alert('❌ Estrellas insuficientes'); }
+            if (balance >= precio) { balance -= precio; updateBalance(); alert('✅ ¡' + item + ' comprado!'); if (item === 'escudo') escudo = true; }
+            else alert('❌ Estrellas insuficientes');
         }
-
-        function girarRuleta() {
-            if (balance < 10) { alert('❌ Necesitas 10⭐'); return; }
-            balance -= 10; updateBalance();
-            const premios = ['💎 100⭐', '⭐ 50⭐', '🎁 Gift', '🛡️ Escudo', '⚡ Nitro', '🔄 Tirada extra', '❌ Sin premio'];
-            const resultado = premios[Math.floor(Math.random() * premios.length)];
-            document.getElementById('ruletaResult').textContent = '🎯 Resultado: ' + resultado;
+        
+        function girarRuleta(precio) {
+            if (balance < precio) { alert('❌ Necesitas ' + precio + '⭐'); return; }
+            balance -= precio; updateBalance();
+            const premios = ['💎 Ganaste 50⭐', '⭐ Ganaste 25⭐', '🛡️ Escudo', '❌ Sin premio', '🎁 Gift', '⚡ Nitro'];
+            const r = premios[Math.floor(Math.random() * premios.length)];
+            document.getElementById('ruletaResult').textContent = '🎯 ' + r;
+            document.getElementById('ruletaResult').classList.add('star-anim');
+            setTimeout(() => document.getElementById('ruletaResult').classList.remove('star-anim'), 500);
         }
-
+        
         function depositar() {
-            const amount = document.getElementById('depositAmount').value;
-            if (amount >= 10) { tg.openInvoice('https://t.me/' + amount, () => { balance += parseInt(amount); updateBalance(); }); }
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            if (amount >= 10) { balance += amount; updateBalance(); alert('✅ Depósito exitoso: +' + amount + '⭐'); }
+            else alert('❌ Mínimo 10⭐');
         }
-
+        
         function retirar() {
-            const amount = document.getElementById('withdrawAmount').value;
-            if (amount >= 10 && balance >= amount) {
-                balance -= parseInt(amount); updateBalance();
-                tg.sendData(JSON.stringify({ action: 'withdraw', amount: amount }));
-                alert('✅ Recibirás un regalo de ' + amount + '⭐ en tu chat privado.');
-            } else { alert('❌ Saldo insuficiente o mínimo 10⭐'); }
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            if (amount >= 100 && balance >= amount) {
+                balance -= amount; updateBalance();
+                tg.sendData(JSON.stringify({ action: 'withdraw', amount }));
+                alert('✅ Recibirás un regalo de ' + amount + '⭐ en tu chat.');
+            } else alert('❌ Mínimo 100⭐ o saldo insuficiente');
         }
-
+        
         function showTab(tab) { closeTabs(); document.getElementById('tab-' + tab).classList.add('active'); }
         function closeTabs() { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); }
-
-        // Three.js
-        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x000011);
+        
+        // Three.js - Space Runner
+        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x050520);
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        camera.position.set(0,1,6); camera.lookAt(0,0,-10);
+        camera.position.set(0, 1.2, 5.5); camera.lookAt(0, 0, -8);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        const starsGeo = new THREE.BufferGeometry(); const starsPos = new Float32Array(2000*3);
-        for(let i=0;i<2000*3;i+=3){ starsPos[i]=(Math.random()-0.5)*60; starsPos[i+1]=(Math.random()-0.5)*40; starsPos[i+2]=(Math.random()-0.5)*30-10; }
-        starsGeo.setAttribute('position',new THREE.BufferAttribute(starsPos,3));
-        scene.add(new THREE.Points(starsGeo,new THREE.PointsMaterial({color:0xffffff,size:0.08})));
-        const shipGroup = new THREE.Group();
-        shipGroup.add(new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.25,0.8,8),new THREE.MeshPhongMaterial({color:0x4488cc,emissive:0x112244})).rotateX(Math.PI/2));
-        shipGroup.add(new THREE.Mesh(new THREE.BoxGeometry(0.5,0.08,0.2),new THREE.MeshPhongMaterial({color:0x2266aa})).translateY(-0.15));
-        const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.12,0.2,6),new THREE.MeshPhongMaterial({color:0xff4400,emissive:0xff2200}));
-        engine.position.y=-0.45; engine.rotation.x=Math.PI/2; shipGroup.add(engine);
-        shipGroup.rotation.z=Math.PI/2; scene.add(shipGroup);
+        
+        // Estrellas
+        const starsGeo = new THREE.BufferGeometry();
+        const starsPos = new Float32Array(2500 * 3);
+        for (let i = 0; i < 2500 * 3; i += 3) {
+            starsPos[i] = (Math.random() - 0.5) * 70;
+            starsPos[i+1] = (Math.random() - 0.5) * 45;
+            starsPos[i+2] = (Math.random() - 0.5) * 35 - 10;
+        }
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+        const stars = new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.06 }));
+        scene.add(stars);
+        
+        // Nave
+        const ship = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.22, 0.7, 8), new THREE.MeshPhongMaterial({ color: 0x44aadd, emissive: 0x112244 }));
+        body.rotation.x = Math.PI / 2; ship.add(body);
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.06, 0.18), new THREE.MeshPhongMaterial({ color: 0x2288bb }));
+        wing.position.y = -0.12; ship.add(wing);
+        const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.1, 0.18, 6), new THREE.MeshPhongMaterial({ color: 0xff4400, emissive: 0xff2200 }));
+        engine.position.y = -0.4; engine.rotation.x = Math.PI / 2; ship.add(engine);
+        ship.rotation.z = Math.PI / 2; scene.add(ship);
+        
         scene.add(new THREE.AmbientLight(0x334466));
-        const light = new THREE.PointLight(0xffffff,1,50); light.position.set(0,3,5); scene.add(light);
+        const light = new THREE.PointLight(0xffffff, 1, 50);
+        light.position.set(0, 3, 5); scene.add(light);
+        
         const asteroids = [];
-        function createAsteroid(){const size=0.2+Math.random()*0.4;const geo=new THREE.IcosahedronGeometry(size,1);for(let i=0;i<geo.attributes.position.count;i++){geo.attributes.position.setXYZ(i,geo.attributes.position.getX(i)+(Math.random()-0.5)*0.1,geo.attributes.position.getY(i)+(Math.random()-0.5)*0.1,geo.attributes.position.getZ(i)+(Math.random()-0.5)*0.1);}const mat=new THREE.MeshPhongMaterial({color:new THREE.Color('hsl(30,'+(20+Math.random()*20)+'%,'+(30+Math.random()*30)+'%)')});const a=new THREE.Mesh(geo,mat);a.position.set((Math.random()-0.5)*5,5,-2);scene.add(a);asteroids.push(a);}
-        document.addEventListener('touchmove',e=>{e.preventDefault();if(gameRunning)shipX=(e.touches[0].clientX/window.innerWidth*2-1)*3;});
-        document.addEventListener('mousemove',e=>{if(gameRunning)shipX=(e.clientX/window.innerWidth*2-1)*3;});
-        function animate(){requestAnimationFrame(animate);if(!gameRunning){renderer.render(scene,camera);return;}shipGroup.position.x+=(shipX-shipGroup.position.x)*0.1;shipGroup.position.x=Math.max(-2.5,Math.min(2.5,shipGroup.position.x));stars.rotation.y+=0.0003;if(Math.random()<0.02)createAsteroid();for(let i=asteroids.length-1;i>=0;i--){asteroids[i].position.y-=0.04;asteroids[i].rotation.x+=0.01;asteroids[i].rotation.y+=0.02;if(Math.abs(asteroids[i].position.x-shipGroup.position.x)<0.5&&Math.abs(asteroids[i].position.y)<0.4){if(escudo){escudo=false;scene.remove(asteroids[i]);asteroids.splice(i,1);continue;}gameRunning=false;document.getElementById('gameOver').style.display='block';document.getElementById('finalScore').textContent=score;const earned=Math.floor(score/10);document.getElementById('earnedStars').textContent=earned;balance+=earned;updateBalance();}if(asteroids[i].position.y<-4){scene.remove(asteroids[i]);asteroids.splice(i,1);score+=10;document.getElementById('score').textContent=score;}}renderer.render(scene,camera);}
+        function createAsteroid() {
+            const size = 0.18 + Math.random() * 0.35;
+            const geo = new THREE.IcosahedronGeometry(size, 1);
+            for (let i = 0; i < geo.attributes.position.count; i++) {
+                geo.attributes.position.setXYZ(i,
+                    geo.attributes.position.getX(i) + (Math.random() - 0.5) * 0.08,
+                    geo.attributes.position.getY(i) + (Math.random() - 0.5) * 0.08,
+                    geo.attributes.position.getZ(i) + (Math.random() - 0.5) * 0.08);
+            }
+            const mat = new THREE.MeshPhongMaterial({ color: new THREE.Color(`hsl(30, ${20+Math.random()*20}%, ${30+Math.random()*30}%)`) });
+            const a = new THREE.Mesh(geo, mat);
+            a.position.set((Math.random() - 0.5) * 5, 5, -2);
+            scene.add(a); asteroids.push(a);
+        }
+        
+        document.addEventListener('touchmove', e => { e.preventDefault(); if (gameRunning) shipX = (e.touches[0].clientX / window.innerWidth * 2 - 1) * 3; });
+        document.addEventListener('mousemove', e => { if (gameRunning) shipX = (e.clientX / window.innerWidth * 2 - 1) * 3; });
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!gameRunning) { renderer.render(scene, camera); return; }
+            ship.position.x += (shipX - ship.position.x) * 0.1;
+            ship.position.x = Math.max(-2.5, Math.min(2.5, ship.position.x));
+            stars.rotation.y += 0.0002;
+            if (Math.random() < 0.018) createAsteroid();
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                asteroids[i].position.y -= 0.04;
+                asteroids[i].rotation.x += 0.01;
+                asteroids[i].rotation.y += 0.015;
+                if (Math.abs(asteroids[i].position.x - ship.position.x) < 0.5 && Math.abs(asteroids[i].position.y) < 0.35) {
+                    if (escudo) { escudo = false; scene.remove(asteroids[i]); asteroids.splice(i, 1); continue; }
+                    gameRunning = false;
+                    document.getElementById('gameOver').style.display = 'block';
+                    document.getElementById('finalScore').textContent = score;
+                    const earned = Math.floor(score / 10);
+                    document.getElementById('earnedStars').textContent = earned;
+                    balance += earned; updateBalance();
+                }
+                if (asteroids[i].position.y < -4) { scene.remove(asteroids[i]); asteroids.splice(i, 1); score += 10; document.getElementById('score').textContent = score; }
+            }
+            renderer.render(scene, camera);
+        }
         animate();
     </script>
 </body>
